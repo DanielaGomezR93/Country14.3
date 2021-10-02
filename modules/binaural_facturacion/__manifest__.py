@@ -19,18 +19,27 @@
     'version': '1.0',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','account','binaural_contactos_configuraciones'],
+    'depends': ['base','account','binaural_contactos_configuraciones', 'account_accountant'],
 
     # always loaded
     'data': [
-        # 'security/ir.model.access.csv',
+        'security/security.xml',
+        'security/ir.model.access.csv',
         'data/config_sequence.xml',
-        #'views/views.xml',
-        #'views/templates.xml',
+        'data/formato_papel.xml',
+        'views/res_config.xml',
         'views/config_views.xml',
         'views/account_move_form_inh.xml',
         'views/account_move_search_inh.xml',
         'views/account_move_trees_inh.xml',
+        'views/account_retention.xml',
+        'views/account_retention_islr.xml',
+        'views/account_payment.xml',
+        'views/account_journal.xml',
+        'wizard/account_payment_register.xml',
+        'report/invoice_free_form_bs.xml',
+        'report/invoice_free_form.xml',
+        'report/report_invoice_document_override.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
