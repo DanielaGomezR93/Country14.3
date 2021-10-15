@@ -23,6 +23,14 @@ _logger = logging.getLogger(__name__)
 class WizardInvoiceBatch(models.TransientModel):
 	_name = "wizard.invoice.batch"
 	_rec_name = "comment"
+	
+	def default_alternate_currency(self):
+		alternate_currency = int(self.env['ir.config_parameter'].sudo().get_param('curreny_foreign_id'))
+
+		if alternate_currency:
+			return alternate_currency
+		else:
+			return False
 
 	company_id = fields.Many2one(
 		'res.company', string='Compañía', default=lambda self: self.env.user.company_id)
@@ -33,7 +41,7 @@ class WizardInvoiceBatch(models.TransientModel):
 				string="Lineas de factura",required=True
 				)
 	partners_ids = fields.Many2many(
-		'res.partner', string='Socios', required=True, domain=[('customer', '=', True),('active', '=', True)])
+		'res.partner', string='Socios', required=True, domain=[('active', '=', True)])#('customer', '=', True),
 
 	sub_amount_untaxed = fields.Monetary(
 		string='Exento',
@@ -59,11 +67,40 @@ class WizardInvoiceBatch(models.TransientModel):
 	comment = fields.Text(string='Comentario')
 	fee_period = fields.Date(string="Periodo de la cuota")
 
+	foreign_currency_rate = fields.Float(string="Tasa", tracking=True)
+	foreign_currency_date = fields.Date(string="Fecha", default=fields.Date.today(), tracking=True)
+
+	foreign_currency_id = fields.Many2one('res.currency', default=default_alternate_currency,
+										  tracking=True)
 	currency_id = fields.Many2one(
 		'res.currency',
 		string="Moneda",
 		default=lambda self: self.env.user.company_id.currency_id,
 	)
+
+	@api.onchange('foreign_currency_id', 'foreign_currency_date')
+	def _compute_foreign_currency_rate(self):
+		_logger.info("buscara tasa por defceto")
+		for record in self:
+			rate = self.env['res.currency.rate'].search([('currency_id', '=', record.foreign_currency_id.id),
+														 ('name', '<=', record.foreign_currency_date)], limit=1,
+														order='name desc')
+			if rate:
+				record.update({
+					'foreign_currency_rate': rate.rate,
+				})
+			else:
+				rate = self.env['res.currency.rate'].search([('currency_id', '=', record.foreign_currency_id.id),
+															 ('name', '>=', record.foreign_currency_date)], limit=1,
+															order='name asc')
+				if rate:
+					record.update({
+						'foreign_currency_rate': rate.rate,
+					})
+				else:
+					record.update({
+						'foreign_currency_rate': 0.00,
+					})
 
 	def set_default_pricelist(self):
 		p = self.env['product.pricelist'].search([('active','=',True)],limit=1).id
@@ -98,9 +135,9 @@ class WizardInvoiceBatch(models.TransientModel):
 		else:
 			raise UserError("Algo no salio bien, error generando Facturas")
 		#raise RedirectWarning(msg, action.id, _('Continuar'))
-	@api.returns('account.invoice')
+	@api.returns('account.move')
 	def _recurring_create_invoice(self, automatic=False):
-		AccountInvoice = self.env['account.invoice']
+		AccountInvoice = self.env['account.move']
 		invoices = []
 		#automatic
 		automatic = True
@@ -108,8 +145,8 @@ class WizardInvoiceBatch(models.TransientModel):
 			#Solo country
 			if not sub.action_number.number:
 				raise UserError("Socio no posee numero de accion")
-			if not sub.business_name:
-				raise UserError("Socio no posee razon social")
+			#if not sub.business_name:
+			#	raise UserError("Socio no posee razon social")
 			if not sub.vat:
 				raise UserError("Socio no posee rif o cedula")
 			try:
@@ -117,7 +154,9 @@ class WizardInvoiceBatch(models.TransientModel):
 				invoices[-1].message_post_with_view('mail.message_origin_link',
 					 values={'self': invoices[-1], 'origin': self},
 					 subtype_id=self.env.ref('mail.mt_note').id)
-				invoices[-1].compute_taxes()
+				invoices[-1]._onchange_recompute_dynamic_lines()
+				invoices[-1]._compute_foreign_currency_rate()
+				
 				if automatic:
 					self.env.cr.commit()
 			except Exception as error:
@@ -133,18 +172,19 @@ class WizardInvoiceBatch(models.TransientModel):
 		
 
 	def _prepare_invoice(self,partner):
+		_logger.info("PARTNER A PASAR %s",partner)
 		invoice = self._prepare_invoice_data_recurring(partner)
 		invoice['invoice_line_ids'] = self._prepare_invoice_lines_recurring(invoice['fiscal_position_id'])
 		return invoice
 	
-	def _prepare_invoice_data_recurring(self,partner):
+	def _prepare_invoice_data_recurring(self,p):
 		self.ensure_one()
-		self.partner_id = partner
-		if not self.partner_id:
+		
+		if not p:
 			raise UserError(_("Please select customer on contract subscription in order to create invoice.!"))
 		company = self.company_id
 
-		fpos_id = self.env['account.fiscal.position'].get_fiscal_position(self.partner_id.id)
+		fpos_id = self.env['account.fiscal.position'].get_fiscal_position(p.id)
 		#asignarlo por defecto arriba
 		journal_config = self.env['country.batch.invoice.config'].search([('active','=',True)],limit=1)
 		if journal_config and journal_config.journal_id:
@@ -154,27 +194,29 @@ class WizardInvoiceBatch(models.TransientModel):
 				'No hay configuración registrada en el sistema por favor contacte al administrador')
 			
 		#comment = self.terms_and_conditions and  tools.html2plaintext(self.terms_and_conditions).strip() or ''
-		comment = self.comment
+		
 		return {
-			#'name': self.partner_id.business_name + ' name',
-			#'origin': self.partner_id.business_name + ' origin',
-			'action_number': self.partner_id.action_number.number,
-			'business_name': self.partner_id.business_name,
-			'vat': self.partner_id.prefix_vat + self.partner_id.vat,
-			'address': self.partner_id.street,
+			#'name': p.business_name + ' name',
+			#'origin': p.business_name + ' origin',
+			'action_number': p.action_number.number,
+			#'business_name': p.business_name,
+			'vat': p.prefix_vat + p.vat,
+			'address': p.street,
 			#'related_project_id':self.id,
-			'account_id': self.partner_id.property_account_receivable_id.id,
-			'type': 'out_invoice',
-			'partner_id': self.partner_id.id,
+			#'account_id': p.property_account_receivable_id.id, 
+			
+			'partner_id': p.id,
 			'currency_id': self.currency_id.id,
 			'journal_id': journal.id,
-			'date_invoice': fields.Date.today(),
+			'invoice_date': fields.Date.today(),
 			#'origin': self.code,
 			'fiscal_position_id': fpos_id,
-			'payment_term_id': self.partner_id.property_payment_term_id.id,
+			'invoice_payment_term_id': p.property_payment_term_id.id,
 			'company_id': company.id,
 			# 'comment': _("This invoice covers the following period: %s - %s") % (next_date, end_date),
-			'comment': comment,
+			'narration': self.comment,
+			#'foreign_currency_rate':self.foreign_currency_rate,
+			'move_type':'out_invoice',
 			'fee_period':self.fee_period,
 		}
 	def _prepare_invoice_lines_recurring(self, fiscal_position):
@@ -192,7 +234,7 @@ class WizardInvoiceBatch(models.TransientModel):
 			journal_config = self.env['country.batch.invoice.config'].search(
 				[('active', '=', True)], limit=1)
 			if journal_config and journal_config.journal_id:
-				account = journal_config.journal_id.default_credit_account_id
+				account = journal_config.journal_id.default_account_id
 			else:
 				raise UserError(
 					'No hay configuración registrada en el sistema por favor contacte al administrador')
@@ -207,9 +249,9 @@ class WizardInvoiceBatch(models.TransientModel):
 			'price_unit': line.price_unit or 0.0,
 			'discount': line.discount,
 			'quantity': line.product_uom_qty,
-			'uom_id': line.product_uom.id,
+			#'uom_id': line.product_uom.id,
 			'product_id': line.product_id.id,
-			'invoice_line_tax_ids': [(6, 0, tax.ids)],
+			'tax_ids': [(6, 0, tax.ids)],
 		}
 
 	def action_subscription_invoice(self, invoice):
@@ -397,14 +439,14 @@ class AnalyticSaleOrderLine(models.TransientModel):
 		title = False
 		message = False
 		warning = {}
-		if product.sale_line_warn != 'no-message':
-			title = _("Warning for %s") % product.name
+		"""if product.sale_line_warn != 'no-message':
+			title = _("Warning for %s") % product.namesale_line_warn
 			message = product.sale_line_warn_msg
 			warning['title'] = title
 			warning['message'] = message
 			result = {'warning': warning}
 			if product.sale_line_warn == 'block':
-				self.product_id = False
+				self.product_id = False"""
 
 		return result
 	
