@@ -130,12 +130,13 @@ class AccountPaymentBinauralFacturacion(models.Model):
 
 	def action_post(self):
 		''' draft -> posted '''
+		self.move_id._post(soft=False)
 		try:
 			self.create_igtf(self.move_id)
 		except Exception as e:
 			_logger.info("E %s",e)
 			pass
-		self.move_id._post(soft=False)
+		
 
 	def action_cancel(self):
 		''' draft -> cancelled '''
@@ -162,7 +163,7 @@ class AccountPaymentBinauralFacturacion(models.Model):
 				'amount_currency': -self.amount_igtf,
 				'currency_id': currency_id,
 				'debit': 0.0,
-				'credit':self.amount_igtf,
+				'credit':self.amount_igtf / self.foreign_currency_rate if self.foreign_currency_rate > 0 else 0,
 				'partner_id': self.partner_id.id,
 				'account_id': self.journal_id.payment_debit_account_id.id if self.amount_igtf < 0.0 else self.journal_id.payment_credit_account_id.id,
 			}))
@@ -171,9 +172,9 @@ class AccountPaymentBinauralFacturacion(models.Model):
 			{
 				'name': 'IGTF',
 				'date_maturity': self.date,
-				'amount_currency':self.amount_igtf, #-self.amount_igtf * self.foreign_currency_rate,
+				'amount_currency':self.amount_igtf,
 				'currency_id': currency_id,
-				'debit': self.amount_igtf,
+				'debit': self.amount_igtf / self.foreign_currency_rate if self.foreign_currency_rate > 0 else 0,
 				'credit': 0,
 				'partner_id': self.partner_id.id,
 				'account_id': account_igtf.destination_account_id.id,
@@ -183,12 +184,14 @@ class AccountPaymentBinauralFacturacion(models.Model):
 				"journal_id": self.journal_id.id,
 				"ref": move.ref,
 				"company_id": move.company_id.id,
-				"name": "IGTF "+str(self.ref) if self.ref else "IGTF",
+				#"name": "IGTF "+str(self.ref) if self.ref else "IGTF",
 				"state": "draft",
 				"line_ids": line_vals_list_2,
+				"foreign_currency_rate":self.foreign_currency_rate,
 			}
 			m = self.env['account.move'].sudo().create(move_vals)
 			if m:
+				m._amount_all_foreign()
 				m._post()
 			self.move_igtf = m.id
 
