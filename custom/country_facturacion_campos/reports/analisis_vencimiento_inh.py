@@ -36,14 +36,14 @@ class WizardAccountsPaymentCountrySociosReportes(models.TransientModel):
         invoices = self.env['account.invoice'].search(search)
         columns = self.create_columns()
         for invoice in invoices:
-            data = dict(oper='FACT' if invoice.type in ['in_invoice', 'out_invoice','out_contingence','in_contingence'] else 'NC' if invoice.type in ['in_refund', 'out_refund'] else 'ND',
+            data = dict(oper='FACT' if invoice.move_type in ['in_invoice', 'out_invoice','out_contingence','in_contingence'] else 'NC' if invoice.move_type in ['in_refund', 'out_refund'] else 'ND',
                         date_invoice=datetime.strptime(str(invoice.date_invoice), '%Y-%m-%d').strftime('%d-%m-%Y'),
                         column_1=0, column_2=0, column_3=0, column_4=0, column_5=0,
                         residual=0, number=invoice.number, partner=invoice.partner_id.name)
             
             
             
-            if invoice.type in ['out_refund', 'in_refund']:
+            if invoice.move_type in ['out_refund', 'in_refund']:
                 data['date_due']=datetime.strptime(str(invoice.date_due), '%Y-%m-%d').strftime('%d-%m-%Y')
                 if invoice.days_expired <= columns[1]:
                     data['column_1'] -= invoice.residual
@@ -126,7 +126,7 @@ class WizardAccountsPaymentCountrySociosReportes(models.TransientModel):
                     else:
                         days_expired = self.calc_days_expired_draft(invoice)
                     days += days_expired
-                    if invoice.type in ['out_refund', 'in_refund']:
+                    if invoice.move_type in ['out_refund', 'in_refund']:
                         residual -= invoice.residual
                         if invoice.days_expired <= columns[1]:
                             data['column_1'] -= invoice.residual

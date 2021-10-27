@@ -40,7 +40,7 @@ class WizardCustomerAccountStatementInheritCountry(models.TransientModel):
 					not_gravable += line.price_unit * line.quantity
 				else:
 					base += line.price_unit * line.quantity
-			if i.type not in 'out_refund':
+			if i.move_type not in 'out_refund':
 				dict['Base imponible'] = base or 0.00
 				dict['Impuesto'] = i.amount_tax or 0.00
 				dict['Exento'] = not_gravable or 0.00
