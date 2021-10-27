@@ -5,7 +5,7 @@
             <field name="model">res.partner</field>
             <field name="arch" type="xml">
                 <tree edit="false" string="Listado en mora" create="false" delete="false">
-                    <field name="image_medium" widget="image" class="oe_avatar"/>
+                    <!-- <field name="image_medium" widget="image" class="oe_avatar"/> -->
                     <field name="action_number"/>
                     <field name="name"/>
                     <field name="vat" string="Documento de identificación"/>
@@ -34,7 +34,7 @@
             <field name="model">res.partner</field>
             <field name="arch" type="xml">
                 <tree edit="false" string="Listado de socios y Familiares" create="false" delete="false">
-                    <field name="image_medium" string="Foto" widget="image" class="oe_avatar"/>
+                    <!-- <field name="image_medium" string="Foto" widget="image" class="oe_avatar"/> -->
                     <field name="action_number"/>
                     <field name="name"/>
                     <field name="vat" string="Cédula"/>
