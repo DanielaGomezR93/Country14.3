@@ -164,6 +164,7 @@ class AccountMoveBinauralFacturacion(models.Model):
 
     foreign_amount_residual = fields.Binary(string="Importe adeudado alterno",
                                                  compute='_amount_all_foreign')
+    
     retention_iva_line_ids = fields.One2many('account.retention.line', 'invoice_id', domain=[('retention_id.type_retention', '=', 'iva')])
     generate_retencion_iva = fields.Boolean(string="Generar Retención IVA", default=False, copy=False)
 
@@ -668,7 +669,13 @@ class AccountMoveBinauralFacturacion(models.Model):
             res['context'].setdefault('default_foreign_currency_id', self.foreign_currency_id.id)
         return res
 
-
+    @api.onchange('foreign_currency_rate')
+    def _onchange_rate(self):
+        _logger.info("cambioooooooooooooooooooooooo")
+        for a in self:
+            if a.move_type == 'entry':
+                for l in a.line_ids:
+                    l._onchange_amount_currency()
 
 
 class AcoountMoveLineBinauralFact(models.Model):
@@ -693,7 +700,7 @@ class AcoountMoveLineBinauralFact(models.Model):
         else:
             return False
 
-    @api.depends('move_id.foreign_currency_rate','price_unit')
+    @api.depends('move_id.foreign_currency_rate','price_unit','quantity')
     def _amount_all_foreign(self):
         """
         Compute the foreign total amounts of the SO.
@@ -827,3 +834,18 @@ class AcoountMoveLineBinauralFact(models.Model):
             .action_invoice_paid()
 
         return results
+
+    @api.onchange('amount_currency')
+    def _onchange_amount_currency(self):
+        _logger.info("TRIGGER")
+        for line in self:
+            company = line.move_id.company_id
+            balance = line.currency_id._convert(line.amount_currency, company.currency_id, company, line.move_id.date,True,line.move_id.foreign_currency_rate)
+            line.debit = balance if balance > 0.0 else 0.0
+            line.credit = -balance if balance < 0.0 else 0.0
+
+            if not line.move_id.is_invoice(include_receipts=True):
+                continue
+
+            line.update(line._get_fields_onchange_balance())
+            line.update(line._get_price_total_and_subtotal())
