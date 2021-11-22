@@ -22,6 +22,7 @@ class AccountReportGeneralLedgerCountry(models.TransientModel):
                                     ], string='Movimientos', required=True, default='posted')
     date_from = fields.Date(string='Fecha Inicial')
     date_to = fields.Date(string='Fecha Final')
+    another_currency = fields.Boolean(string='En Bolivares')
     
     def _print_report(self, data):
         data = self.pre_print_report(data)
@@ -32,4 +33,5 @@ class AccountReportGeneralLedgerCountry(models.TransientModel):
         if data['form'].get('initial_balance') and not data['form'].get('date_from'):
             raise UserError(_("You must define a Start Date"))
         records = self.env[data['model']].browse(data.get('ids', []))
+        data['form'].update(self.read(['another_currency'])[0])
         return self.env.ref('country_facturacion_campos.action_report_general_ledger_country').with_context(landscape=False).report_action(records, data=data)
