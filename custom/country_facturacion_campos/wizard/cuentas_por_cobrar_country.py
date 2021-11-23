@@ -44,7 +44,7 @@ class CuentaPorCobrarCountryClub(models.TransientModel):
 		
 		titulo = "Cuentas por Cobrar"
 
-		search_domain = [('active', '=', True),('parent_id','=',False),('customer','=',True),('supplier','=',False),('action_number','!=',False)]
+		search_domain = [('active', '=', True),('parent_id','=',False),('action_number','!=',False)]
 		docs = self.env['res.partner'].sudo().search(search_domain)
 
 		dic = OrderedDict([
@@ -58,14 +58,14 @@ class CuentaPorCobrarCountryClub(models.TransientModel):
 				
 		search_domain = [('state','not in',['draft','cancelled'])]
 		search_domain += [('payment_type','=','inbound')]
-		search_domain += [('payment_date','<=',wiz.end_date),('payment_date','>=',wiz.start_date)]
+		search_domain += [('date','<=',wiz.end_date),('date','>=',wiz.start_date)]
 		payments = self.env['account.payment'].sudo().search(search_domain)
 		#determinar meses en las columnas: periodos pagados con pagos de este mes
 		
 		months = []
 		for p in payments:
-			for i in p.invoice_ids:
-				if i.state in ['paid','in_payment','open']:
+			for i in p.reconciled_invoice_ids:
+				if i.payment_state in ['paid','in_payment','open']:
 					#print("el pago en el rango elegido tiene una factura asociada del periodo:",i.fee_period)
 					if i.fee_period and (i.fee_period.month,i.fee_period.year) not in months:
 						months.append((i.fee_period.month,i.fee_period.year))
@@ -98,6 +98,7 @@ class CuentaPorCobrarCountryClub(models.TransientModel):
 			total_bs = 0
 			total_usd = 0
 			total_advance = 0
+			total_advance_usd = 0
 			dicti = OrderedDict()
 			dicti.update(dic)
 			#total_base += i.residual_signed
@@ -112,15 +113,17 @@ class CuentaPorCobrarCountryClub(models.TransientModel):
 
 			for m in fechas:
 				mn = dict_month[m.month]
-				bs,usd,advance = wiz.amount_payment_in_month(m,i,payments)
+				bs,usd,advance,advance_usd = wiz.amount_payment_in_month(m,i,payments)
 				total_bs += bs
 				total_usd += usd
 				total_advance += advance
+				total_advance_usd+=advance_usd
 				dicti[mn+' '+str(m.year)+' - Bs'] = bs
 				dicti[mn+' '+str(m.year)+' - USD'] = usd
 			dicti['Total USD'] = total_usd
 			dicti['Total Bs'] = total_bs
-			dicti['Anticipo'] = total_advance
+			dicti['Anticipo Bs'] = total_advance
+			dicti['Anticipo USD'] = total_advance_usd
 			lista.append(dicti)
 		if len(lista) > 0:
 			lista.sort(key=lambda d: d['Nro de Acción'])
@@ -186,8 +189,8 @@ class CuentaPorCobrarCountryClub(models.TransientModel):
 		return data2
 
 	def imprimir_excel_cuenta_por_cobrar(self):
-		_logger.info(self)
-		_logger.info(self.id)
+		#_logger.info(self)
+		#_logger.info(self.id)
 	 
 		return {
 			'type': 'ir.actions.act_url',
@@ -196,35 +199,55 @@ class CuentaPorCobrarCountryClub(models.TransientModel):
 		}
 
 	def amount_payment_in_month(self,m,partner,payments):
-		print("monto a buscar para el partner",partner.name)
-		print("para el periodo",m)
+		#print("monto a buscar para el partner",partner.name)
+		#print("para el periodo",m)
 		#print("arreglo de pagos",payments)
 		payments_for_payment = payments.filtered(lambda p: p.partner_id.id == partner.id)
 		#print("payments_for_payment",payments_for_payment)
 		amount = 0
 		amount_usd = 0
-		acum_advance = 0
+		acum_advance_bs = 0
+		acum_advance_usd = 0
+		
+		alternate_currency = int(self.env['ir.config_parameter'].sudo().get_param('curreny_foreign_id'))
+		#_logger.info("alterna %s",alternate_currency)
+		if alternate_currency:
+		    alternate_currency_id = self.env['res.currency'].sudo().browse(alternate_currency)
 		#si un pago se divide en 2 facturas de periodos diferentes
 		for pp in payments_for_payment:
-			for i in pp.invoice_ids:
+			for i in pp.reconciled_invoice_ids:
 				if i.fee_period and i.fee_period.month == m.month and i.fee_period.year == m.year:
 					#amount += pp.amount
 					#print("payment_move_line_ids",i.payment_move_line_ids)
-					for ip in i.payment_move_line_ids:
+					reconciled_lines = pp.line_ids.filtered(lambda line: line.account_id.user_type_id.type in ('receivable', 'payable'))
+					#reconciled_amls = reconciled_lines.mapped('matched_debit_ids.debit_move_id') + \
+					#   reconciled_lines.mapped('matched_credit_ids.credit_move_id')
+					_logger.info("reconciled_linesreconciled_linesreconciled_lines %s",reconciled_lines)
+					for ip in reconciled_lines:
+						_logger.info("SUMARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR")
 						#print("esta linea asociada a factura tiene el pago",ip.payment_id)
 						#print("y el pago donde estoy consultando es el pago",pp)
-						amount_match = sum([p.amount for p in ip.matched_debit_ids if p.debit_move_id in i.move_id.line_ids])
+						amount_match = sum([p.amount for p in ip.matched_debit_ids if p.debit_move_id in i.line_ids])
+						_logger.info("AMOUNT MATCHHHHHHHHHHHHHHHHHHHH %s",amount_match)
 						#print("amount_match",amount_match)
-						if pp.journal_id.name and pp.journal_id.name.find('$') != -1: 
+						"""if pp.journal_id.name and pp.journal_id.name.find('$') != -1: 
 							amount_usd +=amount_match
 						else:
+							amount +=amount_match"""
+						if not pp.journal_id.currency_id or pp.journal_id.currency_id.id != alternate_currency_id.id: 
+							amount_usd +=amount_match
+							"""if pp.is_advance:
+								acum_advance_usd += amount_match"""
+						else:
 							amount +=amount_match
-						if pp.is_advance:
-							acum_advance += amount_match
+							"""if pp.is_advance:
+								acum_advance_bs += amount_match"""
+						#if pp.is_advance:
+						#	acum_advance += amount_match
 						#if ip.payment_id == pp:
 						#	print("son igualessssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",ip.credit)
-		print("amount",amount)
-		return amount,amount_usd,acum_advance
+		#print("amount",amount)
+		return amount,amount_usd,acum_advance_bs,acum_advance_usd
 class wizard_country_club_get_excel_controller(http.Controller):
 
 	@http.route('/web/get_account_to_pay_country_club', type='http', auth="user")
