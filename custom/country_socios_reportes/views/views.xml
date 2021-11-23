@@ -1,0 +1,19 @@
+<odoo>
+  <data>
+        <record id="view_form_res_partner_contact_inherited" model="ir.ui.view">
+        <field name="name">Extension de contacto</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//notebook/page/field[@name='child_ids']/kanban/templates//div/field[@name='name']" position="after">
+                <div id="vat" class="">
+                    <field name="prefix_vat"/>
+                    <field name="vat"/>
+                </div>
+            </xpath>
+
+        </field>
+    </record>
+  </data>
+</odoo>

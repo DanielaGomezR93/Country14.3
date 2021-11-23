@@ -50,9 +50,9 @@
                             <tr class="text-center">
                                 <th colspan="1" class="clth">Fecha</th>
 	                            <th colspan="1" class="clth">Comprobante</th>
-	                            <th colspan="2" class="clth">Empresa</th>
-                                <th colspan="1" class="clth">Concepto</th>
-	                            <th colspan="1" class="clth">Referencia</th>
+	                            <th colspan="1" class="clth">Empresa</th>
+                                <th colspan="2" class="clth">Concepto</th>
+	                            <th colspan="2" class="clth">Referencia</th>
 	                            <th colspan="1" class="clth">Saldo Anterior</th>
                                 <th colspan="1" class="clth">Débito</th>
                                 <th colspan="1" class="clth">Crédito</th>
@@ -165,9 +165,9 @@
                                             <td colspan="1" class="cltd"><span t-esc="line['ldate']"/></td><!--LM -->
                                         </t>
                                         <td colspan="1" class="cltd"><span t-esc="line['move_name']"/></td>
-                                        <td  class="cltd" colspan="2"><span t-esc="line['partner_name']"/></td>
-                                        <td class="cltd" colspan="1"><span t-esc="line['lname']"/></td>
-                                        <td colspan="1" class="cltd"><span t-if="line['lref']" t-esc="line['lref']"/></td>
+                                        <td  class="cltd" colspan="1"><span t-esc="line['partner_name']"/></td>
+                                        <td class="cltd" colspan="2"><span t-esc="line['lname']"/></td>
+                                        <td colspan="2" class="cltd"><span t-if="line['lref']" t-esc="line['lref']"/></td>
                                         <t t-set="saldo_anterior" t-value="line['balance'] + line['credit'] - line['debit']"/>
                                         <td colspan="1" class="text-right">
                                             <span t-esc="saldo_anterior" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/>

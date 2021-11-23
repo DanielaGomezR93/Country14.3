@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="form_member_list_wizard" model="ir.ui.view">
+        <field name="name">PDF de Socios</field>
+        <field name="model">wizard.member.list</field>
+        <field name="arch" type="xml">
+            <form string="PDF Listado de socios">
+                
+                    <group>
+                        <group>
+                            <field name="status" />
+                            <field name="state_action" />
+                            
+                        </group>
+                    </group>
+                                      
+                <footer>
+                    <button name="print_pdf_member_list" string="Imprimir" type="object" class="oe_highlight" />
+                    <button string="Cancelar" class="btn-default" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_member_list_wizard" model="ir.actions.act_window" >
+        <field name="name">PDF Listado de socios</field>
+        <field name="res_model">wizard.member.list</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field><!--inline-->
+    </record>
+
+	    <menuitem name="PDF Listado de socios" id="country_socios_reportes.action_member_list_wizard_id" parent="Country_Socios.partners" action="action_member_list_wizard"/>
+    </data>
+</odoo>
