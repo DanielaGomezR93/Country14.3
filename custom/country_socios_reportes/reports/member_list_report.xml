@@ -103,7 +103,7 @@
 		                                        </td>
                                                 <td colspan="2" style="text-align: center">
                                                    
-			                                        <span t-esc="o.business_name"/><!--Razon social-->
+			                                        <span t-esc="o.name"/><!--Razon social-->
 		                                        </td>
 
                                                 <td>

@@ -29,7 +29,7 @@ class WizardAdvancePaymentReport(models.TransientModel):
 	], string='Pagos de')
 
 	type_payment = fields.Selection([
-		('advance', 'Anticipo'),
+		#('advance', 'Anticipo'),
 		('payment', 'Pagos'),
 		('is_expense','Gastos'),
 		('all', 'Todos'),

@@ -32,6 +32,8 @@ class AccountReportGeneralLedgerCountry(models.TransientModel):
 
         if data['form'].get('initial_balance') and not data['form'].get('date_from'):
             raise UserError(_("You must define a Start Date"))
+        if not data['form'].get('date_from') or not data['form'].get('date_to'):
+            raise UserError("Fechas obligatorias")
         records = self.env[data['model']].browse(data.get('ids', []))
         data['form'].update(self.read(['another_currency'])[0])
         return self.env.ref('country_facturacion_campos.action_report_general_ledger_country').with_context(landscape=False).report_action(records, data=data)

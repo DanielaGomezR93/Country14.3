@@ -101,7 +101,7 @@
                                                     <t t-if="d.type_report == 'customer'">
                                                         <b><span t-esc="o.action_number.number"/> - </b>
                                                     </t>
-			                                        <b><span t-esc="o.business_name"/></b>
+			                                        <b><span t-esc="o.name"/></b>
                                                     <br/><!--Razon social-->
                                                     <b><span t-esc="o.prefix_vat"/>-<span t-esc="o.vat"/></b>
                                                     <br/>
