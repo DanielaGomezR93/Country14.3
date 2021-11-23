@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_country_analitico,country_facturacion_campos.analitico,model_account_report_general_ledger_country,,1,1,1,1
+access_country_to_pay,country_facturacion_campos.por_Cobrar,model_country_account_to_pay,,1,1,1,1

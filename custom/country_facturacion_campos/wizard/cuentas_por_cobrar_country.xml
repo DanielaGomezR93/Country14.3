@@ -38,7 +38,7 @@
     </record>
 
 
-    <!--menuitem name="Cuenta por Cobrar Country Club" id="order_payment_menu_parents_country_club_to_pay" parent="Binaural_CuentaxCobrar.menu_accounts_receivable_invoice_extend" action="action_wizard_country_account_to_pay"/-->
+    <menuitem name="Cuenta por Cobrar Country Club" id="order_payment_menu_parents_country_club_to_pay" parent="account.menu_finance_receivables" action="action_wizard_country_account_to_pay"/>
 
 
 </odoo>
