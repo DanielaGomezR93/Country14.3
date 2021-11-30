@@ -19,15 +19,18 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'Country_Socios'],
+    'depends': ['base', 'Country_Socios','accounting_pdf_reports'],
 
     # always loaded
     'data': [
-        # 'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
         'views/views.xml',
         'views/report_invoice_inh.xml',
         ##'reports/wizard_analisis_vencimiento.xml',
         'wizard/cuentas_por_cobrar_country.xml',
+        'views/report_country.xml',
+        'views/report_general_ledger_country.xml',
+        'views/general_ledger_country.xml'
     ],
     # only loaded in demonstration mode
     'demo': [

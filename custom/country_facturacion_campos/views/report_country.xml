@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+	    <record id="paperformat_general_ledger_country" model="report.paperformat">
+			<field name="name">Formato Mayor Analitico</field>
+			<field name="format">custom</field>
+			<field name="default" eval="True"/>
+			<field name="page_height">281</field>
+			<field name="page_width">219</field>
+			<field name="orientation">Portrait</field>
+			<field name="margin_top">35</field>
+			<field name="margin_bottom">0</field>
+			<field name="margin_left">0</field>
+			<field name="margin_right">0</field>
+			<field name="header_line" eval="False"/>
+			<field name="header_spacing">0</field>
+			<field name="dpi">90</field>
+	    </record>
+
+        <report
+            id="action_report_general_ledger_country"
+            model="account.report.general.ledger.country"
+            string="MAYOR ANALÍTICO COUNTRY CLUB"
+            report_type="qweb-pdf"
+            name="country_facturacion_campos.report_generalledger_country"
+            file="country_facturacion_campos.report_generalledger_country"
+            paperformat="paperformat_general_ledger_country"
+            />
+
+    </data>
+</odoo>
