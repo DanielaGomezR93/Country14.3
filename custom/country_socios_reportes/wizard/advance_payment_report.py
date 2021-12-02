@@ -29,7 +29,7 @@ class WizardAdvancePaymentReport(models.TransientModel):
 	], string='Pagos de')
 
 	type_payment = fields.Selection([
-		#('advance', 'Anticipo'),
+		('advance', 'Anticipo'),
 		('payment', 'Pagos'),
 		('is_expense','Gastos'),
 		('all', 'Todos'),
@@ -100,11 +100,11 @@ class WizardAdvancePaymentReport(models.TransientModel):
 			search_domain += [('payment_type','=','inbound')]
 
 		if self.type_payment and self.type_payment == 'advance':
-			pass
-			#search_domain += [('is_advance','=',True)]
+			#pass
+			search_domain += [('is_advance','=',True)]
 		elif self.type_payment and self.type_payment == 'payment':
-			#search_domain += [('is_advance','=',False),('is_expense','=',False)]
-			pass
+			search_domain += [('is_advance','=',False),('is_expense','=',False)]
+			#pass
 		elif self.type_payment and self.type_payment == 'is_expense':
 			search_domain += [('is_expense','=',True)]
 
@@ -129,9 +129,10 @@ class WizardAdvancePaymentReport(models.TransientModel):
 
 	def get_residual_by_payment(self,p):
 		acum = 0
+		_logger.info("PPPPP %s",p)
 		if p:
 			domain = [('partner_id', '=', self.env['res.partner']._find_accounting_partner(p.partner_id).id),
-					  ('reconciled', '=', False),
+					  ('reconciled', '=', False),('payment_id','=',p.id),
 					  ('move_id.state', '=', 'posted'),
 					  '|',
 						'&', ('amount_residual_currency', '!=', 0.0), ('currency_id','!=', None),
@@ -145,10 +146,11 @@ class WizardAdvancePaymentReport(models.TransientModel):
 				domain.extend([('credit', '=', 0), ('debit', '>', 0)])
 
 			lines = self.env['account.move.line'].search(domain)
-			print("LINES",lines)
+			_logger.info("LINES %s",lines)
 			#currency_id = self.currency_id
 			if len(lines) != 0:
 				for line in lines:
+					_logger.info("line payment id %s",line.payment_id)
 					if line.payment_id.id == p.id:
 						acum += abs(line.amount_residual)
 		return acum

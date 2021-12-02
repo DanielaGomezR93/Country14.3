@@ -236,12 +236,12 @@ class CuentaPorCobrarCountryClub(models.TransientModel):
 							amount +=amount_match"""
 						if not pp.journal_id.currency_id or pp.journal_id.currency_id.id != alternate_currency_id.id: 
 							amount_usd +=amount_match
-							"""if pp.is_advance:
-								acum_advance_usd += amount_match"""
+							if pp.is_advance:
+								acum_advance_usd += amount_match
 						else:
 							amount +=amount_match
-							"""if pp.is_advance:
-								acum_advance_bs += amount_match"""
+							if pp.is_advance:
+								acum_advance_bs += amount_match
 						#if pp.is_advance:
 						#	acum_advance += amount_match
 						#if ip.payment_id == pp:
