@@ -73,11 +73,11 @@ class ReportMemberList2(models.AbstractModel):
 				search_domain += [('payment_type','=','inbound')]
 
 			if type_payment and type_payment == 'advance':
-				pass
-				#search_domain += [('is_advance','=',True)]
+				#pass
+				search_domain += [('is_advance','=',True)]
 			elif type_payment and type_payment == 'payment':
-				pass
-				#search_domain += [('is_advance','=',False),('is_expense','=',False)]
+				#pass
+				search_domain += [('is_advance','=',False),('is_expense','=',False)]
 			elif type_payment and type_payment == 'is_expense':
 				
 				search_domain += [('is_expense','=',True)]
