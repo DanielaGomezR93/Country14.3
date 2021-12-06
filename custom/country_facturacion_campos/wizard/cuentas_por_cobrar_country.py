@@ -202,8 +202,10 @@ class CuentaPorCobrarCountryClub(models.TransientModel):
 		#print("monto a buscar para el partner",partner.name)
 		#print("para el periodo",m)
 		#print("arreglo de pagos",payments)
+		_logger.info("TOPDOS LOS PAGOS %s",payments)
 		payments_for_payment = payments.filtered(lambda p: p.partner_id.id == partner.id)
 		#print("payments_for_payment",payments_for_payment)
+		_logger.info("FILTRADO POR PARTNER %s",payments_for_payment)
 		amount = 0
 		amount_usd = 0
 		acum_advance_bs = 0
@@ -215,6 +217,10 @@ class CuentaPorCobrarCountryClub(models.TransientModel):
 		    alternate_currency_id = self.env['res.currency'].sudo().browse(alternate_currency)
 		#si un pago se divide en 2 facturas de periodos diferentes
 		for pp in payments_for_payment:
+			if pp.is_advance:
+				#nota: el anticipo no se cruza directo con factura entonces hay que buscar por otro lado
+				_logger.info("ES ANTICIPOOOOOOOOOOOOOOOOOOOOOOOOOOOOO %s",pp.name)
+				_logger.info("reconciled_invoice_ids ANTICIPOOOOOOOOOOOOOOOOOOOOOOOOOOOOO %s",pp.reconciled_invoice_ids)
 			for i in pp.reconciled_invoice_ids:
 				if i.fee_period and i.fee_period.month == m.month and i.fee_period.year == m.year:
 					#amount += pp.amount
