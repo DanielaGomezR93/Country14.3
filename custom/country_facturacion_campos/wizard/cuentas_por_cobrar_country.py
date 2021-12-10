@@ -154,7 +154,7 @@ class CuentaPorCobrarCountryClub(models.TransientModel):
 
 		columnas = list(datos.columns.values)
 		columns2 = [{'header':r} for r in columnas]
-		currency_format = workbook.add_format({'num_format': '#,##0.00'})
+		currency_format = workbook.add_format({'num_format': '#,##0.000'})
 
 		data = datos.values.tolist()
 		last_column = len(columns2)-1
