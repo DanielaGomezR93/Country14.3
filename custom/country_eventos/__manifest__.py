@@ -2,10 +2,10 @@
     'name': "country_eventos",
 
     'summary': """
-       Binaural eventos invitaciones""",
+       Country eventos invitaciones""",
 
     'description': """
-        Binaural eventos invitaciones
+        Country eventos invitaciones
     """,
 
     'author': "Binaural",
@@ -26,8 +26,8 @@
     'data': [
         'views/configurate_qty_entries.xml',
         'views/event.xml',
-        'reports/event_template.xml',
-        'reports/report_event.xml',
+        #'reports/event_template.xml',
+        #'reports/report_event.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

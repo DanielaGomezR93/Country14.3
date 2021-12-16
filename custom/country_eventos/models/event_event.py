@@ -49,9 +49,9 @@ class EventRegistrationExtend(models.Model):
     def create(self, vals):
         res = super(EventRegistrationExtend, self).create(vals)
         param = self.env['ir.config_parameter']
-        invitation_prepaid = bool(param.sudo().get_param('invitation_prepaid'))
+        invitation_prepaid = bool(param.sudo().get_param('confirmate_to_pay'))
         if invitation_prepaid:
-            res.generate_qr()
+            #res.generate_qr()
             try:
                 temp_id = self.env.ref('event.event_registration_mail_template_badge')
                 temp_id.send_mail(res['id'], True)
@@ -59,8 +59,8 @@ class EventRegistrationExtend(models.Model):
             except:
                 return
         else:
-            res.confirm_registration()
-            res.generate_qr()
+            #res.confirm_registration()
+            #res.generate_qr()
             try:
                 temp_id = self.env.ref('event.event_registration_mail_template_badge')
                 temp_id.send_mail(res['id'], True)
