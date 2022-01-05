@@ -29,7 +29,6 @@
         'wizard/wizard_member_list.xml',
         'reports/member_list_report.xml',
         'wizard/advance_payment_report.xml',
-        'reports/report_advance_payment_template.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
