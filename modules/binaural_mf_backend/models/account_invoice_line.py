@@ -10,7 +10,11 @@ import json
 
 class AccountMoveLineBinauralMFBackend(models.Model):
     _inherit = 'account.move.line'
-    tax_ids = fields.Many2many('account.tax', string='Taxes', help="Taxes that apply on the base amount", check_company=True,domain=lambda self: [('id', 'in', self._get_domain_list())])
+
+    #Descontinuar en la siguiente version major de integra
+    # removida llamada de _get_domain_list
+    # tax_ids = fields.Many2many('account.tax', string='Taxes', help="Taxes that apply on the base amount", check_company=True,domain=lambda self: [('id', 'in', self._get_domain_list())])
+    tax_ids = fields.Many2many('account.tax', string='Taxes', help="Taxes that apply on the base amount", check_company=True)
 
     @api.onchange('price_unit')
     def _onchange_price_unit(self):
@@ -21,8 +25,10 @@ class AccountMoveLineBinauralMFBackend(models.Model):
                 qty_entire = len(splitter[0])
                 #la decimal siempre se asumira como 2 digitos
                 if qty_entire > 9:
-                    raise UserError("La cantidad de digitos en precio no puede ser mayor a 11 incluida la parte decimal")
+                    raise UserError("La cantidad de digitos en precio no puede ser mayor a 11 incluida la parte decimal")    
 
+    #Descontinuar en la siguiente version major de integra
+    # No hace lo que se necesita, se hara la validacion en el guardar de la factura
     @api.model
     def _get_domain_list(self):
         taxes = self.env['account.tax'].search([('active', '=', True)])
