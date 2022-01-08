@@ -30,9 +30,7 @@ class AccountMoveLineBinauralMFBackend(models.Model):
                     raise UserError("La cantidad de digitos en precio no puede ser mayor a 11 incluida la parte decimal")
 
     @api.onchange('tax_ids')
-    def _onchange_tax_ids(self):
-        _logger.info('===== onchange tax_ids =====')
-        _logger.info(self.tax_ids)
+    def _onchange_tax_ids(self):        
         if self.move_id.move_type in ['out_invoice','out_refund']:
             if self.tax_ids.type_tax_use == 'purchase':
                 raise UserError("Debe seleccionar solo impuestos de venta para las facturas de clientes")
