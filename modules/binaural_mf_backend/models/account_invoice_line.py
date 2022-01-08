@@ -7,7 +7,9 @@ from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
 import re
 import uuid
 import json
+import logging
 
+_logger = logging.getLogger(__name__)
 class AccountMoveLineBinauralMFBackend(models.Model):
     _inherit = 'account.move.line'
 
@@ -25,7 +27,21 @@ class AccountMoveLineBinauralMFBackend(models.Model):
                 qty_entire = len(splitter[0])
                 #la decimal siempre se asumira como 2 digitos
                 if qty_entire > 9:
-                    raise UserError("La cantidad de digitos en precio no puede ser mayor a 11 incluida la parte decimal")    
+                    raise UserError("La cantidad de digitos en precio no puede ser mayor a 11 incluida la parte decimal")
+
+    @api.onchange('tax_ids')
+    def _onchange_tax_ids(self):
+        _logger.info('===== onchange tax_ids =====')
+        _logger.info(self.tax_ids)
+        if self.move_id.move_type in ['out_invoice','out_refund']:
+            if self.tax_ids.type_tax_use == 'purchase':
+                raise UserError("Debe seleccionar solo impuestos de venta para las facturas de clientes")
+
+        if self.move_id.move_type in ['in_invoice','in_refund']:
+            if self.tax_ids.type_tax_use == 'sale':
+                raise UserError("Debe seleccionar solo impuestos de compra para las facturas de proveedor")
+            
+
 
     #Descontinuar en la siguiente version major de integra
     # No hace lo que se necesita, se hara la validacion en el guardar de la factura
