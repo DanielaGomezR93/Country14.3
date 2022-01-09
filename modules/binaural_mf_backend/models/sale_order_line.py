@@ -12,8 +12,13 @@ import json
 class SaleOrderLineBinauralMFBackend(models.Model):
     _inherit = 'sale.order.line'
 
-    tax_id = fields.Many2many('account.tax', string='Taxes', domain=lambda self: [('id', 'in', self._get_domain_list())])
+    #Descontinuar en la siguiente version major de integra
+    # removida llamada de _get_domain_list
+    # tax_id = fields.Many2many('account.tax', string='Taxes', domain=lambda self: [('id', 'in', self._get_domain_list())])
+    tax_id = fields.Many2many('account.tax', string='Taxes')
     
+    #Descontinuar en la siguiente version major de integra
+    # No hace lo que se necesita, se hara la validacion en el guardar de la factura
     @api.model
     def _get_domain_list(self):
         taxes = self.env['account.tax'].search([('active','=',True)])

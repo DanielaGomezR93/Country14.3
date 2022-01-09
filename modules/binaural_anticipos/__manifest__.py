@@ -21,7 +21,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','account', 'account_accountant'],
+    'depends': ['base','account', 'account_accountant', 'binaural_facturacion'],
 
     # always loaded
     'data': [
@@ -29,6 +29,10 @@
         'views/views.xml',
         'views/account_payment_inh.xml',
         'views/account_advance_config.xml',
+        'wizard/wizard_payment_report.xml',
+        'wizard/advance_payment_report.xml',
+        'reports/all_payment_report.xml',
+        'reports/report_advance_payment_template.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

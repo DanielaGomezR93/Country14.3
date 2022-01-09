@@ -11,13 +11,18 @@ class AccountPaymentInh(models.Model):
 
     def action_draft(self):
         ''' posted -> draft '''
+        if self.move_igtf and self.is_igtf:
+            self.move_igtf.button_draft()
         aml_anticipos = self.env['account.move.line'].search(
             [('payment_id_advance', '=', self.id)])
         if not aml_anticipos:
             self.move_id.button_draft()
         else:
-            raise exceptions.UserError(
-                "No puede llevar a borrador un pago que ha sido conciliado")
+            for aml in aml_anticipos.filtered(lambda line: line.move_id.state != 'cancel'):
+                aml.move_id.cancel_move()
+                _logger.info('IDS')
+                _logger.info(aml.id)
+            self.move_id.button_draft()
 
     @api.depends('journal_id', 'partner_id', 'partner_type', 'is_internal_transfer', 'is_advance')
     def _compute_destination_account_id(self):
@@ -141,9 +146,12 @@ class AccountPaymentInh(models.Model):
                         "The journal entry %s reached an invalid state relative to its payment.\n"
                         "To be consistent, the journal items must share the same partner."
                     ) % move.display_name)
-            
+                ctas_anticipos = []
+                for x in self.env['account.payment.config.advance'].search([('advance_type', '=', 'customer')],
+                                                                           order='id desc'):
+                    ctas_anticipos.append(x.advance_account_id.id)
                 if counterpart_lines.account_id.user_type_id.type == 'receivable' or \
-                        (counterpart_lines.account_id.user_type_id.type == 'other' and counterpart_lines.account_id.user_type_id.name == 'Pasivo circulantes'):
+                        (counterpart_lines.account_id.user_type_id.type == 'other' and counterpart_lines.account_id.id in ctas_anticipos):
                     partner_type = 'customer'
                 else:
                     partner_type = 'supplier'

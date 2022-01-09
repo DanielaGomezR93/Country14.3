@@ -154,7 +154,7 @@ class CuentaPorCobrarCountryClub(models.TransientModel):
 
 		columnas = list(datos.columns.values)
 		columns2 = [{'header':r} for r in columnas]
-		currency_format = workbook.add_format({'num_format': '#,##0.00'})
+		currency_format = workbook.add_format({'num_format': '#,##0.000'})
 
 		data = datos.values.tolist()
 		last_column = len(columns2)-1
@@ -202,8 +202,10 @@ class CuentaPorCobrarCountryClub(models.TransientModel):
 		#print("monto a buscar para el partner",partner.name)
 		#print("para el periodo",m)
 		#print("arreglo de pagos",payments)
+		#_logger.info("TOPDOS LOS PAGOS %s",payments)
 		payments_for_payment = payments.filtered(lambda p: p.partner_id.id == partner.id)
 		#print("payments_for_payment",payments_for_payment)
+		#_logger.info("FILTRADO POR PARTNER %s",payments_for_payment)
 		amount = 0
 		amount_usd = 0
 		acum_advance_bs = 0
@@ -215,6 +217,27 @@ class CuentaPorCobrarCountryClub(models.TransientModel):
 		    alternate_currency_id = self.env['res.currency'].sudo().browse(alternate_currency)
 		#si un pago se divide en 2 facturas de periodos diferentes
 		for pp in payments_for_payment:
+			if pp.is_advance:
+				#nota: el anticipo no se cruza directo con factura entonces hay que buscar por otro lado
+				_logger.info("ES ANTICIPOOOOOOOOOOOOOOOOOOOOOOOOOOOOO %s",pp.name)
+				_logger.info("reconciled_invoice_ids ANTICIPOOOOOOOOOOOOOOOOOOOOOOOOOOOOO %s",pp.reconciled_invoice_ids)
+				lines_advance = self.env['account.move.line'].sudo().search([('payment_id_advance','=',pp.id),('move_id.state','=','posted')])
+				_logger.info("line_idsline_idsline_idsline_idsline_ids %s",pp.line_ids)
+				_logger.info("lines_advancelines_advancelines_advancelines_advancelines_advance %s",lines_advance)
+				invoices = self.env['account.move'].sudo().search([('state','=','posted'),('payment_state','in',['paid','in_payment']),('partner_id','=',pp.partner_id.id)])
+				for i in invoices:
+					if i.fee_period and i.fee_period.month == m.month and i.fee_period.year == m.year:
+						for ip in lines_advance:
+							amount_match = sum([p.amount for p in ip.matched_debit_ids if p.debit_move_id in i.line_ids])
+							if not pp.journal_id.currency_id or pp.journal_id.currency_id.id != alternate_currency_id.id: 
+								amount_usd +=amount_match
+								if pp.is_advance:
+									acum_advance_usd += amount_match
+							else:
+								amount +=amount_match
+								if pp.is_advance:
+									acum_advance_bs += amount_match
+
 			for i in pp.reconciled_invoice_ids:
 				if i.fee_period and i.fee_period.month == m.month and i.fee_period.year == m.year:
 					#amount += pp.amount
@@ -223,6 +246,7 @@ class CuentaPorCobrarCountryClub(models.TransientModel):
 					#reconciled_amls = reconciled_lines.mapped('matched_debit_ids.debit_move_id') + \
 					#   reconciled_lines.mapped('matched_credit_ids.credit_move_id')
 					_logger.info("reconciled_linesreconciled_linesreconciled_lines %s",reconciled_lines)
+					
 					for ip in reconciled_lines:
 						_logger.info("SUMARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR")
 						#print("esta linea asociada a factura tiene el pago",ip.payment_id)
@@ -236,12 +260,12 @@ class CuentaPorCobrarCountryClub(models.TransientModel):
 							amount +=amount_match"""
 						if not pp.journal_id.currency_id or pp.journal_id.currency_id.id != alternate_currency_id.id: 
 							amount_usd +=amount_match
-							"""if pp.is_advance:
-								acum_advance_usd += amount_match"""
+							if pp.is_advance:
+								acum_advance_usd += amount_match
 						else:
 							amount +=amount_match
-							"""if pp.is_advance:
-								acum_advance_bs += amount_match"""
+							if pp.is_advance:
+								acum_advance_bs += amount_match
 						#if pp.is_advance:
 						#	acum_advance += amount_match
 						#if ip.payment_id == pp:

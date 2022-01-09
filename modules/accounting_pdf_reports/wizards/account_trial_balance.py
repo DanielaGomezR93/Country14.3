@@ -8,9 +8,14 @@ class AccountBalanceReport(models.TransientModel):
     _name = 'account.balance.report'
     _description = 'Trial Balance Report'
 
-    journal_ids = fields.Many2many('account.journal', 'account_balance_report_journal_rel', 'account_id', 'journal_id', string='Journals', required=True, default=[])
+    journal_ids = fields.Many2many('account.journal', 'account_report_trial_balance_journal_rel', 'account_id', 'journal_id', string='Journals', required=True)
 
     another_currency = fields.Boolean(string='En Bolivares')
+
+    #sobreescribir
+    target_move = fields.Selection([('posted', 'Todos los asientos validados'),
+                                    ('all', 'Todos los asientos'),
+                                    ], string='Movimientos destino', required=True, default='posted')
 
     def _print_report(self, data):
         data = self.pre_print_report(data)

@@ -7,10 +7,16 @@ from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
 import re
 import uuid
 import json
+import logging
 
+_logger = logging.getLogger(__name__)
 class AccountMoveLineBinauralMFBackend(models.Model):
     _inherit = 'account.move.line'
-    tax_ids = fields.Many2many('account.tax', string='Taxes', help="Taxes that apply on the base amount", check_company=True,domain=lambda self: [('id', 'in', self._get_domain_list())])
+
+    #Descontinuar en la siguiente version major de integra
+    # removida llamada de _get_domain_list
+    # tax_ids = fields.Many2many('account.tax', string='Taxes', help="Taxes that apply on the base amount", check_company=True,domain=lambda self: [('id', 'in', self._get_domain_list())])
+    tax_ids = fields.Many2many('account.tax', string='Taxes', help="Taxes that apply on the base amount", check_company=True)
 
     @api.onchange('price_unit')
     def _onchange_price_unit(self):
@@ -23,6 +29,20 @@ class AccountMoveLineBinauralMFBackend(models.Model):
                 if qty_entire > 9:
                     raise UserError("La cantidad de digitos en precio no puede ser mayor a 11 incluida la parte decimal")
 
+    @api.onchange('tax_ids')
+    def _onchange_tax_ids(self):        
+        if self.move_id.move_type in ['out_invoice','out_refund']:
+            if self.tax_ids.type_tax_use == 'purchase':
+                raise UserError("Debe seleccionar solo impuestos de venta para las facturas de clientes")
+
+        if self.move_id.move_type in ['in_invoice','in_refund']:
+            if self.tax_ids.type_tax_use == 'sale':
+                raise UserError("Debe seleccionar solo impuestos de compra para las facturas de proveedor")
+            
+
+
+    #Descontinuar en la siguiente version major de integra
+    # No hace lo que se necesita, se hara la validacion en el guardar de la factura
     @api.model
     def _get_domain_list(self):
         taxes = self.env['account.tax'].search([('active', '=', True)])

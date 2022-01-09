@@ -10,7 +10,7 @@ from datetime import date
 from odoo import api, fields, exceptions, http, models, _
 
 class ReportMemberList2(models.AbstractModel):
-	_name = 'report.country_socios_reportes.advance_payment_template_report'
+	_name = 'report.binaural_anticipos.advance_payment_template_report'
 
 	@api.model
 	def _get_report_values(self, docids, data=None):
@@ -73,13 +73,10 @@ class ReportMemberList2(models.AbstractModel):
 				search_domain += [('payment_type','=','inbound')]
 
 			if type_payment and type_payment == 'advance':
-				pass
-				#search_domain += [('is_advance','=',True)]
+				search_domain += [('is_advance','=',True)]
 			elif type_payment and type_payment == 'payment':
-				pass
-				#search_domain += [('is_advance','=',False),('is_expense','=',False)]
+				search_domain += [('is_advance','=',False),('is_expense','=',False)]
 			elif type_payment and type_payment == 'is_expense':
-				
 				search_domain += [('is_expense','=',True)]
 
 			if at_today:
