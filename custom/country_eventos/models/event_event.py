@@ -28,9 +28,9 @@ class EventRegistrationExtend(models.Model):
         ('open', 'Pago confirmado'), ('done', 'Asistencia al Club')],
         string='Status', default='draft', readonly=True, copy=False, track_visibility='onchange')
 
-    @api.model
+    """@api.model
     def _prepare_attendee_values(self, registration):
-        """ Override to add sale related stuff """
+        """ """Override to add sale related stuff""" """
         line_id = registration.get('sale_order_line_id')
         if line_id:
             registration.setdefault('partner_id', line_id.order_id.partner_id)
@@ -43,15 +43,15 @@ class EventRegistrationExtend(models.Model):
                 'sale_order_id': line_id.order_id.id,
                 'sale_order_line_id': line_id.id,
             })
-        return att_data
+        return att_data"""
 
-    @api.model
+    """@api.model
     def create(self, vals):
         res = super(EventRegistrationExtend, self).create(vals)
         param = self.env['ir.config_parameter']
-        invitation_prepaid = bool(param.sudo().get_param('invitation_prepaid'))
+        invitation_prepaid = bool(param.sudo().get_param('confirmate_to_pay'))
         if invitation_prepaid:
-            res.generate_qr()
+            #res.generate_qr()
             try:
                 temp_id = self.env.ref('event.event_registration_mail_template_badge')
                 temp_id.send_mail(res['id'], True)
@@ -59,15 +59,15 @@ class EventRegistrationExtend(models.Model):
             except:
                 return
         else:
-            res.confirm_registration()
-            res.generate_qr()
+            #res.confirm_registration()
+            #res.generate_qr()
             try:
                 temp_id = self.env.ref('event.event_registration_mail_template_badge')
                 temp_id.send_mail(res['id'], True)
                 res.action_send_badge_email()
             except:
                 return
-        return res
+        return res"""
 
     def cancel_invitation_due(self):
         date_now = str(date.today())
