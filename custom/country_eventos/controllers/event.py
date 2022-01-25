@@ -9,13 +9,9 @@ from datetime import datetime, timedelta, date
 
 
 class WebsiteEventControllerExtend(WebsiteEventController):
-    
-    @http.route(
-        ['''/event/<model("event.event", "[('website_id', 'in', (False, current_website_id))]"):event>/register'''],
-        type='http', auth="public", website=True, sitemap=False)
-    def event_register(self, event, **post):
-        if not event.can_access_from_current_website():
-            raise werkzeug.exceptions.NotFound()
+
+    """def _prepare_event_register_values(self, event, **post):
+        urls = event._get_event_resource_urls()
         user_id = request.env['res.users'].search([('id', '=', request.env.context.get('uid'))])
         cfr_search = request.env['frecuent.partner.relation'].search([('partner_id', '=', user_id.partner_id.id)])
         cf = []
@@ -27,31 +23,53 @@ class WebsiteEventControllerExtend(WebsiteEventController):
                 'phone': x.frecuent_partner_id.phone,
                 'name': x.frecuent_partner_id.name,
                 'active': x.active,
-
+        
             }
             cf.append(val)
-        values = {
+        return {
             'event': event,
             'valid': True,
             'msg': '',
             'main_object': event,
             'range': range,
-            'registrable': event.sudo()._is_event_registrable(),
+            'google_url': urls.get('google_url'),
+            'iCal_url': urls.get('iCal_url'),
             'contacts': cf,
-        }
-        return request.render("website_event.event_description_full", values)
+        }"""
+
+    def _create_attendees_from_registration_post(self, event, registration_data):
+        """ Also try to set a visitor (from request) and
+        a partner (if visitor linked to a user for example). Purpose is to gather
+        as much informations as possible, notably to ease future communications.
+        Also try to update visitor informations based on registration info. """
+        visitor_sudo = request.env['website.visitor']._get_visitor_from_request(force_create=True)
+        visitor_sudo._update_visitor_last_visit()
+        visitor_values = {}
     
-    @http.route(['/event/<model("event.event"):event>/registration/new'], type='json', auth="public", methods=['POST'],
-                website=True)
-    def registration_new(self, event, **post):
-        tickets = self._process_tickets_details(post)
-        if not tickets:
-            return False
-        return request.env['ir.ui.view'].render_template("website_event.registration_attendee_details",
-                                                         {'tickets': tickets, 'event': event})
+        registrations_to_create = []
+        for registration_values in registration_data:
+            registration_values['event_id'] = event.id
+            if not registration_values.get('partner_id') and visitor_sudo.partner_id:
+                registration_values['partner_id'] = visitor_sudo.partner_id.id
+            elif not registration_values.get('partner_id'):
+                registration_values['partner_id'] = request.env.user.partner_id.id
+        
+            if visitor_sudo:
+                # registration may give a name to the visitor, yay
+                if registration_values.get('name') and not visitor_sudo.name and not visitor_values.get('name'):
+                    visitor_values['name'] = registration_values['name']
+                # update registration based on visitor
+                registration_values['visitor_id'] = visitor_sudo.id
+        
+            registrations_to_create.append(registration_values)
+    
+        if visitor_values:
+            visitor_sudo.write(visitor_values)
+    
+        return request.env['event.registration'].sudo().create(registrations_to_create)
 
 
-class WebsiteEventSaleControllerExtend(WebsiteEventSaleController):
+"""class WebsiteEventSaleControllerExtend(WebsiteEventSaleController):
 
     @http.route()
     def event_register(self, event, **post):
@@ -61,19 +79,6 @@ class WebsiteEventSaleControllerExtend(WebsiteEventSaleController):
             if pricelist:
                 event = event.with_context(pricelist=pricelist.id)
         return super(WebsiteEventSaleControllerExtend, self).event_register(event, **post)
-    
-    def _process_tickets_details(self, data):
-        ticket_post = {}
-        for key, value in data.items():
-            if not key.startswith('nb_register') or '-' not in key:
-                continue
-            items = key.split('-')
-            if len(items) < 2:
-                continue
-            ticket_post[int(items[1])] = int(value)
-        tickets = request.env['event.event.ticket'].browse(tuple(ticket_post))
-        return [{'id': ticket.id, 'name': ticket.name, 'quantity': ticket_post[ticket.id], 'price': ticket.price} for
-                ticket in tickets if ticket_post[ticket.id]]
 
     def valid(self, date1, partner, registrations):
         ticket = ''
@@ -230,3 +235,4 @@ class WebsiteEventSaleControllerExtend(WebsiteEventSaleController):
             return False
         else:
             return True
+"""
