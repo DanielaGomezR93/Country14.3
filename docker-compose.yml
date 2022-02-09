@@ -5,6 +5,7 @@ services:
     build:
       context: .
     container_name: integra14_container
+    command: odoo --dev=all
     depends_on:
       - db-integra14
     ports:
@@ -14,14 +15,31 @@ services:
       - ./config:/etc/odoo
       - ./enterprise:/mnt/extra-addons
       - ./modules:/mnt/custom-addons
-      #- ./custom:/mnt/another-addons
+      - ./custom:/mnt/another-addons
     environment:
       - PYTHONUNBUFFERED=0
     #devices:
     #  - "/dev/ttyACM0:/dev/ttyACM0"
     restart: always
+  # web-integra14-debug:
+  #   build: 
+  #     context: .
+  #   container_name: integra14_debug_country
+  #   command: python3 -m debugpy --listen 0.0.0.0:3001 /usr/bin/odoo --db_user=odoo --db_host=db-integra14 --db_password=odoo
+  #   depends_on:
+  #     - db-integra14
+  #   ports:
+  #     - "8888:3001"
+  #     - "15000:8069"
+  #   volumes:
+  #     - odoo-web-integra14:/var/lib/odoo
+  #     - ./config:/etc/odoo
+  #     - ./enterprise:/mnt/extra-addons
+  #     - ./modules:/mnt/custom-addons
+  #     - ./custom:/mnt/another-addons
+  #   restart: always
   db-integra14:
-    image: postgres:13
+    image: postgres:13        
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_PASSWORD=odoo
@@ -29,6 +47,20 @@ services:
       - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
       - odoo-db-integra14:/var/lib/postgresql/data/pgdata
+  pgadmin:
+    container_name: pgadmin_container_country
+    image: dpage/pgadmin4:6
+    environment:
+      PGADMIN_DEFAULT_EMAIL: binaural.ca@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: odoo
+      PGADMIN_CONFIG_SERVER_MODE: 'False'    
+    volumes:
+        - pgadmin:/root/.pgadmin
+
+    ports:
+      - "8081:80"    
+    restart: unless-stopped
 volumes:
   odoo-web-integra14:
   odoo-db-integra14:
+  pgadmin:
