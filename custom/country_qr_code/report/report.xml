@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <report id="country_qr_code.print_qr"
+            model="res.partner"
+            name="country_qr_code.customer_qr_template"
+            file="country_qr_code.customer_qr_template"
+            string="Qr Code"
+            report_type="qweb-pdf"
+                menu="False"
+        />
+
+	    <report id="country_qr_code.print_qr_invitation"
+            model="res.partner"
+            name="country_qr_code.customer_qr_invitation_template"
+            file="country_qr_code.customer_qr_invitation_template"
+            string="Qr Code"
+            report_type="qweb-pdf"
+                menu="False"
+        />
+
+        <record id="country_qr_code.print_qr" model="ir.actions.report">
+            <field name="paperformat_id" ref="country_qr_code.customer_badge_paperformat"/>
+        </record>
+
+	    <record id="country_qr_code.print_qr_invitation" model="ir.actions.report">
+            <field name="paperformat_id" ref="country_qr_code.customer_badge_paperformat"/>
+        </record>
+
+    </data>
+</odoo>

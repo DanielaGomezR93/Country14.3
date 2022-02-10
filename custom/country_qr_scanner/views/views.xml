@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="menu_scanner" model="website.menu">
+            <field name="name">Escanear Qr</field>
+            <field name="url">/scanner</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence" type="int">60</field>
+            <field name="website_id" ref="website.default_website"/>
+        </record>
+
+        <record id="search_scanner" model="ir.ui.view">
+            <field name="name">Escanear Qr</field>
+            <field name="type">qweb</field>
+            <field name="key">country_qr_scanner.search_scanner</field>
+            <field name="arch" type="xml">
+                <t name="Escanear Qr" t-name="country_qr_scanner.search_scanner">
+                  <t t-call="website.layout">
+                    <div id="wrap">
+                      <div class="oe_structure"/>
+                      <div class="container">
+                          <h1>Escanear</h1>
+                          <div class="row">
+                              <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+                                  <div class="oe_structure">
+                                      <div>
+                                          <p>Escanee el código qr del socio.</p>
+                                      </div>
+                                  </div>
+
+                                  <div>
+                                    <form  class="s_website_form form-horizontal container-fluid mt32">
+	                                    <div style="width: 450px" id="reader"></div>
+                                    </form>
+                                </div>
+                              </div>
+                              <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 mb32">
+	                              <div id="reader-results">
+	                              </div>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="oe_structure"/>
+
+                    </div>
+                  </t>
+                </t>
+            </field>
+        </record>
+
+        <record id="scanner_page" model="website.page">
+            <field name="url">/ScannerQr</field>
+            <field name="website_published">True</field>
+            <field name="view_id" ref="search_scanner" />
+        </record>
+
+        <record id="menu_scanner" model="website.menu">
+            <field name="page_id" ref="scanner_page" />
+
+        </record>
+
+
+    </data>
+</odoo>
