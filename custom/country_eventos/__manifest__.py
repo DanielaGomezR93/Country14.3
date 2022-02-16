@@ -20,7 +20,7 @@
     "application": False,
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'event', 'website_event', 'website_event_sale', 'website'],
+    'depends': ['base', 'event', 'website_event', 'website_event_sale', 'website', 'website_sale', 'binaural_sitio_web'],
 
     # always loaded
     'data': [
