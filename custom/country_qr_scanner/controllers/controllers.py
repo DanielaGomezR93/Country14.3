@@ -36,7 +36,7 @@ class StatusPartnerController(http.Controller):
                     data = http.request.env['event.registration'].search(
                         [('id', '=', code_id)], limit=1)
                     if data.id:
-                        data.button_reg_close()
+                        data.action_set_done()
                         data.write({'date_scanned': datetime.now()})
                 return {"status": 'Pago Confirmado',
                         "success": True,
