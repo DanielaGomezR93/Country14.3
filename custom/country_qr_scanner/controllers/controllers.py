@@ -13,14 +13,14 @@ class StatusPartnerController(http.Controller):
                         "success":True,
                         "name": res.name,
                         "vat": res.prefix_vat + res.vat,
-                        "photo": res.image,
+                        "photo": res.image_1920,
                         }
             else:
                 return {"status": "Inactivo",
                         "success":False,
                         "name": res.name,
                         "vat": res.prefix_vat + res.vat,
-                        "photo": res.image,
+                        "photo": res.image_1920,
                         }
         else:
             return {"status":"No hay codigo", "success":False}
@@ -43,7 +43,7 @@ class StatusPartnerController(http.Controller):
                         "partner": res.partner_id.name,
                         "name": res.name,
                         "vat": res.prefix_vat + res.vat,
-                        "photo": res.partner_id.image,
+                        "photo": res.partner_id.image_1920,
                         "date_scanned": str(res.date_scanned)
                         }
             
@@ -53,7 +53,7 @@ class StatusPartnerController(http.Controller):
                         "partner": res.partner_id.name,
                         "name": res.name,
                         "vat": res.prefix_vat + res.vat,
-                        "photo": res.partner_id.image,
+                        "photo": res.partner_id.image_1920,
                         "date_scanned": str(res.date_scanned)
                         }
         else:
