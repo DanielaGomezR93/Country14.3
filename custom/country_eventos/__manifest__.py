@@ -24,10 +24,11 @@
 
     # always loaded
     'data': [
+        'security/ir.model.access.csv',
         'views/configurate_qty_entries.xml',
         'views/event.xml',
         'reports/event_template.xml',
-        #'reports/report_event.xml',
+        'reports/report_event.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

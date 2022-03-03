@@ -39,6 +39,9 @@
                     <field name="prefix_vat" string="Tipo Doc."/>
                     <field name="vat" string="Cedula/Rif"/>
 	            </field>
+	            <field name="create_date">
+		            <field name="date_invitation" string="Fecha de invitación"/>
+	            </field>
             </field>
         </record>
     </data>
