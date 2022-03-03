@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <template id="scanner_track_form_js" inherit_id="website.assets_frontend" name="Options block js">
+      <xpath expr="script[last()]" position="after">
+	      <script src="/country_qr_scanner/static/src/js/html5-qrcode.min.js"></script>
+	      <script src="/country_qr_scanner/static/src/js/html5-qrcode-scanner.js"></script>
+	      <script type="text/javascript" src="/country_qr_scanner/static/src/js/scanner_qr.js" />
+      </xpath>
+    </template>
+
+</odoo>

@@ -27,6 +27,7 @@ class EventRegistrationExtend(models.Model):
         ('draft', 'Pago No confirmado'), ('cancel', 'Invitación Cancelada'),
         ('open', 'Pago confirmado'), ('done', 'Asistencia al Club')],
         string='Status', default='draft', readonly=True, copy=False, track_visibility='onchange')
+    contact = fields.Boolean('Frecuente')
 
     """@api.model
     def _prepare_attendee_values(self, registration):
@@ -45,13 +46,13 @@ class EventRegistrationExtend(models.Model):
             })
         return att_data"""
 
-    """@api.model
+    @api.model
     def create(self, vals):
         res = super(EventRegistrationExtend, self).create(vals)
         param = self.env['ir.config_parameter']
         invitation_prepaid = bool(param.sudo().get_param('confirmate_to_pay'))
         if invitation_prepaid:
-            #res.generate_qr()
+            res.generate_qr()
             try:
                 temp_id = self.env.ref('event.event_registration_mail_template_badge')
                 temp_id.send_mail(res['id'], True)
@@ -59,15 +60,15 @@ class EventRegistrationExtend(models.Model):
             except:
                 return
         else:
-            #res.confirm_registration()
-            #res.generate_qr()
+            res.action_confirm()
+            res.generate_qr()
             try:
                 temp_id = self.env.ref('event.event_registration_mail_template_badge')
                 temp_id.send_mail(res['id'], True)
                 res.action_send_badge_email()
             except:
                 return
-        return res"""
+        return res
 
     def cancel_invitation_due(self):
         date_now = str(date.today())
@@ -76,3 +77,6 @@ class EventRegistrationExtend(models.Model):
              ('state', 'in', ['draft', 'open'])])
         for x in registrations:
             x.write({'state': 'cancel'})
+
+    def _get_website_registration_allowed_fields(self):
+        return {'name', 'phone', 'email', 'mobile', 'event_id', 'partner_id', 'event_ticket_id', 'prefix_vat', 'vat', 'date_invitation', 'contact'}

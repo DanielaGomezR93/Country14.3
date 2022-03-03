@@ -66,6 +66,7 @@ var EventRegistrationForm = Widget.extend({
                     $button.prop('disabled', false);
                 });
                 $modal.on('click', '.clear-item', function (clicked) {
+                    alert('ENVIAR LIMPIAR');
                     console.log('Pasoooo');
                     console.log(clicked.target.getAttribute('name'));
                     let $button_select = clicked.target.getAttribute('name').toString().slice(0, 1);
@@ -74,6 +75,79 @@ var EventRegistrationForm = Widget.extend({
                     $("input[name=" + $value_select.toString().concat('-name') + "]").val('');
                     $("input[name=" + $value_select.toString().concat('-email') + "]").val('');
                     $("input[name=" + $value_select.toString().concat('-phone') + "]").val('');
+
+                });
+                $modal.on('click', '.delete-cf', function (clicked) {
+                    alert('ENVIAR BORRAR CF');
+                    console.log('Pasoooo');
+                    console.log(clicked.target.getAttribute('name'));
+                    let $button_select = clicked.target.getAttribute('name').toString().slice(0, 1);
+                    let $value_select = clicked.target.getAttribute('name').toString().slice(1,);
+                    $("div[name=f" + $value_select.toString().concat('-div') + "]").hide();
+                    $("input[name=f" + $value_select.toString().concat('-name') + "]").val('');
+
+                });
+                $modal.on('click', '.save-cf', function (clicked) {
+                    alert('ENVIAR SAVE CF');
+                    console.log('Pasoooo');
+                    console.log(clicked.target.getAttribute('name'));
+                    let $button_select = clicked.target.getAttribute('name').toString().slice(0, 1);
+                    let $value_select = clicked.target.getAttribute('name').toString().slice(1,);
+                    //$("div[name=f" + $value_select.toString().concat('-div') + "]").hide();
+                    $("input[name=a" + $value_select.toString().concat('-operation') + "]").val('save');
+
+                });
+                $modal.on('click', '.selection-cf', function (clicked) {
+                    alert('ENVIAR SELECT CF');
+                    console.log('Pasoooo');
+                    console.log(clicked.target.getAttribute('name'));
+                    let $button_select = clicked.target.getAttribute('name').toString().slice(0, 1);
+                    let $value_select = clicked.target.getAttribute('name').toString().slice(1,);
+                    //let $f = 'f'.concat($value_select,'-vat');
+                    let $r = $value_select.concat('-vat');
+
+                    let $prefix_vat_select = $("input[name=" + 'f'.concat($value_select,'-prefix_vat') + "]").val();
+                    let $vat_select = $("input[name=" + 'f'.concat($value_select,'-vat') + "]").val();
+                    let $name_select = $("input[name=" + 'f'.concat($value_select,'-name') + "]").val();
+                    let $email_select = $("input[name=" + 'f'.concat($value_select,'-email') + "]").val();
+                    let $phone_select = $("input[name=" + 'f'.concat($value_select,'-phone') + "]").val();
+
+
+                    //$vat_register = $("input[name=" + $r + "]").val($vat_select);
+                    console.log('button selected');
+                    console.log($button_select);
+                    console.log('value selected');
+                    console.log($value_select);
+                    console.log('Buscar para');
+                    //console.log($f);
+                    console.log('Input prefix_vat');
+                    console.log($prefix_vat_select);
+                    console.log('Input vat');
+                    console.log($vat_select);
+                    console.log('Input name');
+                    console.log($name_select);
+                    console.log('Input email');
+                    console.log($email_select);
+                    console.log('Input phone');
+                    console.log($phone_select);
+
+                    var $iter = 1;
+                    var $insert = false;
+                    while ($iter < 10) {
+                        if ($insert == false) {
+                            console.log('NO INSERTADO');
+                            if ($("input[name=" + $iter.toString().concat('-vat') + "]").val() == '') {
+                                console.log('insertando');
+                                $("input[name=" + $iter.toString().concat('-vat') + "]").val($vat_select);
+                                $("input[name=" + $iter.toString().concat('-name') + "]").val($name_select);
+                                $("input[name=" + $iter.toString().concat('-email') + "]").val($email_select);
+                                $("input[name=" + $iter.toString().concat('-phone') + "]").val($phone_select);
+                                $insert = true;
+                                $iter = 10;
+                            }
+                        }
+                        $iter++;
+                    }
 
                 });
                 $modal.on('click', '.close', function () {

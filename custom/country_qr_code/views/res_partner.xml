@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="partner_form_inherit" model="ir.ui.view">
+            <field name="name">res.partner.form.qr.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='create_company']" position="before">
+                    <button name="generate_qr" type="object" class="btn-box" icon="fa-qrcode text-success" attrs="{'invisible': [('qr_code', '!=', False)]}">
+                        <field name="qr_code" invisible="1"/> Generar QR</button>
+                    <button name="clear_qr" type="object" class="btn-box" icon="fa-qrcode text-danger" attrs="{'invisible': [('qr_code', '=', False)]}">
+                        <field name="qr_code" invisible="1"/> Borrar QR</button>
+                </xpath>
+                <field name="category_id" position="after">
+                    <field name="qr_code" attrs="{'invisible': [('qr_code', '=', False)]}"/>
+                    <field name="qr" widget='image' class="oe_avatar" attrs="{'invisible': [('qr_code', '=', False)]}"/>
+                    <field name="qr_end_date" widget="date" attrs="{'invisible': [('qr_code', '=', False)]}"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="settings_form_inherit_for_qr" model="ir.ui.view">
+            <field name="name">res.config.inherit.qr</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('settings')]" position="inside">
+                    <div class="app_settings_block" data-string="General Settings" string="General Settings" data-key="general_settings">
+                        <div id="setup_qrcode">
+                            <h2>Configurar QRCode</h2>
+                            <div class="row mt16 o_settings_container">
+                                <div class="col-xs-12 col-md-6 o_setting_box">
+                                    <div class="o_setting_right_pane">
+                                        <span class="fa fa-lg"/>
+                                        <div class="text-muted">
+                                            Establezca su prefijo único.
+                                        </div>
+                                        <div class="content-group">
+                                            <div class="mt16 row">
+                                                <label for="customer_prefix" class="col-xs-3 col-md-6 o_light_label"/>
+                                                <field name="customer_prefix" class="oe_inline"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+	    <record id="view_event_registration_cqc_form" model="ir.ui.view">
+            <field name="name">view.event.registration.cqc.form</field>
+            <field name="model">event.registration</field>
+            <field name="inherit_id" ref="event.view_event_registration_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='event_id']" position="before">
+                    <button name="generate_qr" type="object" class="btn-box" icon="fa-qrcode text-success" attrs="{'invisible': [('qr_code', '!=', False)]}">
+                        <field name="qr_code" invisible="1"/> Generar QR</button>
+                    <button name="clear_qr" type="object" class="btn-box" icon="fa-qrcode text-danger" attrs="{'invisible': [('qr_code', '=', False)]}">
+                        <field name="qr_code" invisible="1"/> Borrar QR</button>
+                </xpath>
+                <field name="partner_id" position="before">
+                    <field name="qr_code" attrs="{'invisible': [('qr_code', '=', False)]}"/>
+                    <field name="qr" widget='image' class="oe_avatar" attrs="{'invisible': [('qr_code', '=', False)]}"/>
+                    <field name="qr_end_date" widget="date" attrs="{'invisible': [('qr_code', '=', False)]}"/>
+                </field>
+            </field>
+        </record>
+    </data>
+
+</odoo>
