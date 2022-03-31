@@ -87,7 +87,7 @@ class WizardAdvancePaymentReport(models.TransientModel):
 			self.end_date = fields.Date.today()
 
 		data = {'form':{'type_residual':self.type_residual,'type_report': self.type_report,'type_payment': self.type_payment,'all_partner':self.all_partner,'partner':self.partner.id,'at_today':self.at_today,'start_date':self.start_date,'end_date':self.end_date}}
-		return self.env.ref('country_socios_reportes.action_report_advance_payment_report').with_context(landscape=True).report_action(self, data=data)
+		return self.env.ref('binaural_anticipos.action_report_advance_payment_report').with_context(landscape=True).report_action(self, data=data)
 
 
 	def get_payments_by_partner(self,partner):

@@ -19,7 +19,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','Country_Socios'],
+    'depends': ['base','Country_Socios', 'binaural_anticipos'],
 
     # always loaded
     'data': [
