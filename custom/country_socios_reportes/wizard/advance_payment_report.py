@@ -60,9 +60,9 @@ class WizardAdvancePaymentReport(models.TransientModel):
 			domain = []
 			print("es un partner especifico, retornar domain")
 			if self.type_report == 'supplier':
-				domain = [('supplier','=',True),('active','=',True)]
+				domain = [('supplier_rank','=',True),('active','=',True)]
 			else:
-				domain = [('customer','=',True),('active','=',True)]
+				domain = [('customer_rank','=',True),('active','=',True)]
 		else:
 			domain = []
 		return {
