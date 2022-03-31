@@ -91,7 +91,7 @@ class WizardAccountsPaymentCountrySociosReportes(models.TransientModel):
                 [('active', '=', True), ('supplier', '=', True)])
         else:
             partners = self.env['res.partner'].search(
-                [('active', '=', True), ('customer', '=', True)])
+                [('active', '=', True), ('customer_rank', '=', True)])
         self._get_day_aging()
         columns = self.create_columns()
 

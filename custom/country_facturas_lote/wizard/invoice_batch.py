@@ -41,7 +41,7 @@ class WizardInvoiceBatch(models.TransientModel):
 				string="Lineas de factura",required=True
 				)
 	partners_ids = fields.Many2many(
-		'res.partner', string='Socios', required=True, domain=[('active', '=', True)])#('customer', '=', True),
+		'res.partner', string='Socios', required=True, domain=[('active', '=', True)])
 
 	sub_amount_untaxed = fields.Monetary(
 		string='Exento',
