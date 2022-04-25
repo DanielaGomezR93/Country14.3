@@ -65,8 +65,7 @@ var EventRegistrationForm = Widget.extend({
                     $modal.modal('hide');
                     $button.prop('disabled', false);
                 });
-                $modal.on('click', '.clear-item', function (clicked) {
-                    alert('ENVIAR LIMPIAR');
+                $modal.on('click', '.clear-item', function (clicked) {                    
                     console.log('Pasoooo');
                     console.log(clicked.target.getAttribute('name'));
                     let $button_select = clicked.target.getAttribute('name').toString().slice(0, 1);
@@ -77,8 +76,7 @@ var EventRegistrationForm = Widget.extend({
                     $("input[name=" + $value_select.toString().concat('-phone') + "]").val('');
 
                 });
-                $modal.on('click', '.delete-cf', function (clicked) {
-                    alert('ENVIAR BORRAR CF');
+                $modal.on('click', '.delete-cf', function (clicked) {                    
                     console.log('Pasoooo');
                     console.log(clicked.target.getAttribute('name'));
                     let $button_select = clicked.target.getAttribute('name').toString().slice(0, 1);
@@ -87,8 +85,7 @@ var EventRegistrationForm = Widget.extend({
                     $("input[name=f" + $value_select.toString().concat('-name') + "]").val('');
 
                 });
-                $modal.on('click', '.save-cf', function (clicked) {
-                    alert('ENVIAR SAVE CF');
+                $modal.on('click', '.save-cf', function (clicked) {                    
                     console.log('Pasoooo');
                     console.log(clicked.target.getAttribute('name'));
                     let $button_select = clicked.target.getAttribute('name').toString().slice(0, 1);
@@ -97,8 +94,7 @@ var EventRegistrationForm = Widget.extend({
                     $("input[name=a" + $value_select.toString().concat('-operation') + "]").val('save');
 
                 });
-                $modal.on('click', '.selection-cf', function (clicked) {
-                    alert('ENVIAR SELECT CF');
+                $modal.on('click', '.selection-cf', function (clicked) {                    
                     console.log('Pasoooo');
                     console.log(clicked.target.getAttribute('name'));
                     let $button_select = clicked.target.getAttribute('name').toString().slice(0, 1);
@@ -164,7 +160,7 @@ publicWidget.registry.EventRegistrationFormInstance = publicWidget.Widget.extend
     /**
      * @override
      */
-    start: function () {
+    start: function () {    
         var def = this._super.apply(this, arguments);
         this.instance = new EventRegistrationForm(this);
         return Promise.all([def, this.instance.attachTo(this.$el)]);
