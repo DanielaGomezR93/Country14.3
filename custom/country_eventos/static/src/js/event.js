@@ -61,12 +61,10 @@ var EventRegistrationForm = Widget.extend({
                 $modal.find('.modal-body > div').removeClass('container'); // retrocompatibility - REMOVE ME in master / saas-19
                 $modal.appendTo('body').modal();
                 $modal.on('click', '.js_goto_event', function () {
-                    alert('ENVIAR');
                     $modal.modal('hide');
                     $button.prop('disabled', false);
                 });
                 $modal.on('click', '.clear-item', function (clicked) {
-                    alert('ENVIAR LIMPIAR');
                     console.log('Pasoooo');
                     console.log(clicked.target.getAttribute('name'));
                     let $button_select = clicked.target.getAttribute('name').toString().slice(0, 1);
@@ -78,7 +76,6 @@ var EventRegistrationForm = Widget.extend({
 
                 });
                 $modal.on('click', '.delete-cf', function (clicked) {
-                    alert('ENVIAR BORRAR CF');
                     console.log('Pasoooo');
                     console.log(clicked.target.getAttribute('name'));
                     let $button_select = clicked.target.getAttribute('name').toString().slice(0, 1);
@@ -88,7 +85,6 @@ var EventRegistrationForm = Widget.extend({
 
                 });
                 $modal.on('click', '.save-cf', function (clicked) {
-                    alert('ENVIAR SAVE CF');
                     console.log('Pasoooo');
                     console.log(clicked.target.getAttribute('name'));
                     let $button_select = clicked.target.getAttribute('name').toString().slice(0, 1);
@@ -98,7 +94,6 @@ var EventRegistrationForm = Widget.extend({
 
                 });
                 $modal.on('click', '.selection-cf', function (clicked) {
-                    alert('ENVIAR SELECT CF');
                     console.log('Pasoooo');
                     console.log(clicked.target.getAttribute('name'));
                     let $button_select = clicked.target.getAttribute('name').toString().slice(0, 1);

@@ -4,6 +4,7 @@
 	<template id="country_assets_frontend" inherit_id="website_event.assets_frontend" name="Website Assets">
 		<xpath expr="//script[@src='/website_event/static/src/js/website_event.js']" position="replace">
             <script type="text/javascript" src="/country_eventos/static/src/js/event.js"></script>
+			<link rel="stylesheet" href="/country_eventos/static/src/css/style.css" />
         </xpath>
 	</template>
 
@@ -23,7 +24,7 @@
 		                <t t-set="counter_frequent" t-value="0"/>
 	                    <t t-foreach="tickets" t-as="ticket" t-if="availability_check">
 		                    <div class="row">
-								<div class="col-lg-3 d-inline-flex d-lg-inline-block align-items-center"><strong>Fecha:</strong> <input class='form-control ml-3 ml-lg-0' type='date' t-attf-name="#{counter}-date_invitation" data-date-format="YYYY-MM-DD" required="This field is required"/></div>
+								<div class="col-lg-3 d-inline-flex d-lg-inline-block align-items-center ml-2 mr-2"><strong>Fecha:</strong> <input class='form-control ml-3 ml-lg-0' type='date' t-attf-name="#{counter}-date_invitation" data-date-format="YYYY-MM-DD" required="This field is required"/></div>
 							</div>
 	                        <t t-foreach="range(1, ticket['quantity'] + 1)" t-as="att_counter" name="attendee_loop">
 	                            <t t-set="counter" t-value="counter + 1"/>
@@ -31,9 +32,22 @@
 	                                <h5 class="mt-1 pb-2 border-bottom">Ticket #<span t-esc="counter"/> <small class="text-muted">- <span t-esc="ticket['name']"/></small></h5>
 									<t t-set="attendee_placeholder">Attendee #%s</t>
 		                            <div class="row">
-			                            <div class="col-lg-1 pr-lg-0 d-inline-flex d-lg-inline-block align-items-center">
-											<label>Doc</label>
-											<select name="prefix_vat" t-attf-class="form-control ml-3 ml-lg-0" required="This field is required" t-attf-name="#{counter}-prefix_vat">
+										
+									<div class="col-lg-1 pr-lg-0 d-inline-flex d-lg-none align-items-center">
+										<label>C.I/R.I.F</label>
+											<select name="prefix_vat" t-attf-class="form-control w-25 ml-5 ml-lg-0" required="This field is required" t-attf-name="#{counter}-prefix_vat">
+												<option value="v">V</option>
+												<option value="e">E</option>
+												<option value="j">J</option>
+												<option value="g">G</option>
+												<option value="c">C</option>
+											</select>
+											<input class='form-control w-75 w-sm-100 w-md-100 w-lg-100 ml-2 ml-sm-2 ml-md-2 ml-lg-0' type='text' t-attf-name="#{counter}-vat" id="#{counter}-vat" required="This field is required"/>										
+                                        </div>
+										
+			                            <div class="col-none col-lg-1 pr-lg-0 d-inline-flex d-none d-sm-none d-md-none d-lg-block align-items-center">
+											<label class="mr-5 d-none d-sm-none d-md-none d-lg-block">Doc</label>
+											<select name="prefix_vat" t-attf-class="form-control w-auto ml-4 ml-lg-0 d-none d-sm-none d-md-none d-lg-block" required="This field is required" t-attf-name="#{counter}-prefix_vat">
 												<option value="v">V</option>
 												<option value="e">E</option>
 												<option value="j">J</option>
@@ -41,21 +55,21 @@
 												<option value="c">C</option>
 											</select>
                                         </div>
-			                            <div class="col-lg-2 pr-lg-0 d-inline-flex d-lg-inline-block align-items-center mt-2 mt-lg-0">
-				                            <label>C.I/R.I.F</label>
-											<input class='form-control ml-3 ml-lg-0' type='text' t-attf-name="#{counter}-vat" id="#{counter}-vat" required="This field is required"/>
+			                            <div class="col-1 col-sm-1 col-md-1- col-lg-2 pr-lg-0 d-none d-sm-none d-md-none d-lg-block  d-inline-flex align-items-center mt-2 mt-lg-0">
+				                            <label class="d-none d-sm-none d-md-none d-lg-block">C.I/R.I.F</label>
+											<input class='form-control w-75 w-sm-100 w-md-100 w-lg-100  ml-5 ml-sm-5 ml-md-5 ml-lg-0 d-none d-sm-none d-md-none d-lg-block' type='text' t-attf-name="#{counter}-vat" id="#{counter}-vat" required="This field is required"/>
 										</div>
-	                                    <div class="col-lg-2 pr-lg-0 d-inline-flex d-lg-inline-block align-items-center mt-2 mt-lg-0">
+	                                    <div class="col-lg-2 pr-lg-0 d-inline-flex d-lg-inline-block align-items-center mt-sm-2 mt-2 mt-md-2 mt-lg-0">
 	                                        <label>Name</label>
-	                                        <input class="form-control" type="text" t-attf-name="#{counter}-name" required="This field is required"/>
+	                                        <input class="form-control w-75 w-sm-100 w-md-100 w-lg-100 ml-5 ml-sm-5 ml-md-5 ml-lg-0" type="text" t-attf-name="#{counter}-name" required="This field is required"/>
 	                                    </div>
 	                                    <div class="col-lg-2 pr-lg-0 d-inline-flex d-lg-inline-block align-items-center mt-2 mt-lg-0">
 	                                        <label>Email</label>
-	                                        <input class="form-control" type="email" t-attf-name="#{counter}-email" required="This field is required"/>
+	                                        <input class="form-control w-100 w-sm-100 w-md-100 w-lg-100 mr-lg-0 ml-3 ml-sm-2 ml-md-2 ml-lg-0" type="email" t-attf-name="#{counter}-email" required="This field is required"/>
 	                                    </div>
-	                                    <div class="col-lg-2 pr-lg-0 d-inline-flex d-lg-inline-block align-items-center mt-2 mt-lg-0">
+	                                    <div class="col-lg-2 pr-lg-0 d-inline-flex d-lg-inline-block align-items-center mt-1 mt-lg-0">
 	                                        <label>Phone <small>(Optional)</small></label>
-	                                        <input class="form-control" type="tel" t-attf-name="#{counter}-phone"/>
+	                                        <input class="form-control w-100 w-sm-100 w-md-100 w-lg-100 mr-lg-0 ml-3 ml-sm-2 ml-md-2 ml-lg-0" type="tel" t-attf-name="#{counter}-phone"/>
 	                                    </div>
 			                            <div class="col-lg pr-lg-0 d-inline-flex d-lg-inline-block align-items-center mt-2 mt-lg-0">
 				                            <label>Frecuente</label>
@@ -75,14 +89,26 @@
 	                            <strong> You ordered more tickets than available seats</strong>
 	                        </div>
 	                    </t>
-		                <h2>Contactos Frecuentes</h2>
+		                <h2 class="ml-3 mt-3">Contactos Frecuentes</h2>
 	                    <t t-set="partner" t-value="request.env['res.users'].search([('id','=', uid)], limit=1).partner_id.id"/>
 	                    <t t-foreach="request.env['frecuent.partner.relation'].search([('partner_id','=', partner), ('active','=', True)])" t-as="c">
 	                        <t t-set="counter_frequent" t-value="counter_frequent + 1"/>
 	                        <div class="row mb4" t-attf-name="f#{counter_frequent}-div">
-	                            <div class="col-lg-1 pr-lg-0 d-inline-flex d-lg-inline-block align-items-center">
-									<strong class="d-lg-none">Doc</strong>
-									<select name="prefix_vat" t-att-value="c.frecuent_partner_id.prefix_vat" t-attf-class="form-control ml-3 ml-lg-0" t-attf-name="f#{counter_frequent}-prefix_vat">
+							
+								<div class="col-lg-1 pr-lg-0 d-inline-flex mr-3 ml-3 d-lg-none align-items-center">
+										<label>C.I/R.I.F</label>
+											<select name="prefix_vat" t-att-value="c.frecuent_partner_id.prefix_vat" t-attf-class="form-control ml-3 ml-lg-0 w-auto" t-attf-name="f#{counter_frequent}-prefix_vat">
+												<option value="v">V</option>
+												<option value="e">E</option>
+												<option value="j">J</option>
+												<option value="g">G</option>
+												<option value="c">C</option>
+											</select>
+											<input class='form-control ml-3 ml-lg-0' t-att-value="c.frecuent_partner_id.vat" type='text' t-attf-name="f#{counter_frequent}-vat"/>                                        </div>
+	                            
+								<div class="col-none col-lg-1 pr-lg-0 d-inline-flex d-none d-sm-none d-md-none d-lg-block align-items-center ml-3 mr-3">
+									<strong class="d-lg-none d-none d-sm-none d-md-none">Doc</strong>
+									<select name="prefix_vat" t-att-value="c.frecuent_partner_id.prefix_vat" t-attf-class="form-control ml-3 ml-lg-0 d-none d-sm-none d-md-none d-lg-block" t-attf-name="f#{counter_frequent}-prefix_vat">
 										<option value="v">V</option>
 										<option value="e">E</option>
 										<option value="j">J</option>
@@ -90,32 +116,32 @@
 										<option value="c">C</option>
 									</select>
 	                            </div>
-	                            <div class="col-lg-2 pr-lg-0 d-inline-flex d-lg-inline-block align-items-center mt-2 mt-lg-0">
-									<strong class="d-lg-none">C.I/R.I.F</strong>
-									<input class='form-control ml-3 ml-lg-0' t-att-value="c.frecuent_partner_id.vat" type='text' t-attf-name="f#{counter_frequent}-vat"/>
+	                            <div class="col-none col-lg-2 pr-lg-0 d-inline-flex d-none d-sm-none d-md-none d-lg-block align-items-center mt-2 mt-lg-0 ">
+									<strong class="d-lg-none d-none d-sm-none d-md-none">C.I/R.I.F</strong>
+									<input class='form-control ml-3 ml-lg-0 d-none d-sm-none d-md-none d-lg-block' t-att-value="c.frecuent_partner_id.vat" type='text' t-attf-name="f#{counter_frequent}-vat"/>
 								</div>
-	                            <div class="col-lg-2 pr-lg-0 d-inline-flex d-lg-inline-block align-items-center mt-2 mt-lg-0">
+	                            <div class="col-lg-2 pr-lg-0 d-inline-flex d-lg-inline-block align-items-center mt-2 mr-3 ml-3 mt-lg-0">
 									<strong class="d-lg-none">Name</strong>
 									<input class='form-control ml-3 ml-lg-0' t-att-value="c.frecuent_partner_id.name" type='text' t-attf-name="f#{counter_frequent}-name"/>
 								</div>
-	                            <div class="col-lg-2 pr-lg-0 d-inline-flex d-lg-inline-block align-items-center mt-2 mt-lg-0">
-									<strong class="d-lg-none">Email</strong>
-									<input class='form-control ml-3 ml-lg-0' t-att-value="c.frecuent_partner_id.email" type='email' t-attf-name="f#{counter_frequent}-email"/>
+	                            <div class="col-none col-lg-2 pr-lg-0 d-inline-flex d-none d-lg-inline-block align-items-center mt-2 mr-3 ml-3 mt-lg-0">
+									<strong class="d-none">Email</strong>
+									<input class='form-control ml-3 ml-lg-0 d-none' t-att-value="c.frecuent_partner_id.email" type='email' t-attf-name="f#{counter_frequent}-email"/>
 								</div>
-	                            <div class="col-lg-2 pr-lg-0 d-inline-flex d-lg-inline-block align-items-center mt-2 mt-lg-0">
-									<strong class="d-lg-none">Phone</strong> <span class="text-muted d-lg-none">(Optional)</span>
-									<input class='form-control ml-3 ml-lg-0' t-att-value="c.frecuent_partner_id.phone" type='text' t-attf-name="f#{counter_frequent}-phone"/>
+	                            <div class="col-none col-lg-2 pr-lg-0 d-inline-flex d-none d-lg-inline-block align-items-center mt-2 mr-3 ml-3 mt-lg-0">
+									<strong class="d-none">Phone</strong> <span class="text-muted  d-none">(Optional)</span>
+									<input class='form-control ml-3 ml-lg-0 d-none' t-att-value="c.frecuent_partner_id.phone" type='text' t-attf-name="f#{counter_frequent}-phone"/>
 								</div>
 
 	                            <!--div style="padding: 0px 5px;" class="col-lg-1"><imput type="button" t-attf-name="g#{counter_frequent}" style="background: gray;border-color: gray;width: 68px;font-size: x-small;font-weight: 600;padding: 0px;height: 23px;" class="btn btn-primary save-cf">Guardar</imput></div-->
-	                            <div class="col-lg-3 mb-3 mb-lg-0 d-flex mt-2 mt-lg-0">
-									<div class="col-auto col-lg pl-0 px-lg-0 d-flex align-items-end"><imput type="button" t-attf-name="s#{counter_frequent}" class="btn btn-primary selection-cf">Seleccionar</imput></div>
-									<div class="col-auto col-lg pl-0 px-lg-3 d-flex align-items-end"><imput type="button" t-attf-name="d#{counter_frequent}" class="btn btn-danger delete-cf">Eliminar</imput></div><!-- <i class="fa fa-trash"/> -->
+	                            <div class="col-lg-3 mb-3 mb-lg-0 d-flex mt-2 mt-lg-3 ml-3">
+									<div class="col-auto col-lg pl-0 px-lg-0 d-flex align-items-end mr-3"><imput type="button" t-attf-name="s#{counter_frequent}" class="btn btn-primary selection-cf mr-3">Seleccionar</imput></div>
+									<div class="col-auto col-lg pl-0 px-lg-3 d-flex align-items-end mr-3"><imput type="button" t-attf-name="d#{counter_frequent}" class="btn btn-danger delete-cf mr-3">Eliminar</imput></div><!-- <i class="fa fa-trash"/> -->
 								</div>
 
 	                        </div>
 	                    </t>
-	                    <div class="modal-footer border-0 justify-content-between">
+	                    <div class="modal-footer border-0 justify-content-between mt-3 mr-3">
 	                        <button type="button" class="btn btn-secondary js_goto_event" data-dismiss="modal">Cancel</button>
 	                        <button type="submit" class="btn btn-primary" t-if="availability_check">Continue</button>
 	                    </div>
