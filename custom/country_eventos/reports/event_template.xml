@@ -4,7 +4,6 @@
 	<template id="country_assets_frontend" inherit_id="website_event.assets_frontend" name="Website Assets">
 		<xpath expr="//script[@src='/website_event/static/src/js/website_event.js']" position="replace">
             <script type="text/javascript" src="/country_eventos/static/src/js/event.js"></script>
-			<link rel="stylesheet" href="/country_eventos/static/src/css/style.css" />
         </xpath>
 	</template>
 
@@ -33,21 +32,9 @@
 									<t t-set="attendee_placeholder">Attendee #%s</t>
 		                            <div class="row">
 										
-									<div class="col-lg-1 pr-lg-0 d-inline-flex d-lg-none align-items-center">
-										<label>C.I/R.I.F</label>
-											<select name="prefix_vat" t-attf-class="form-control w-25 ml-5 ml-lg-0" required="This field is required" t-attf-name="#{counter}-prefix_vat">
-												<option value="v">V</option>
-												<option value="e">E</option>
-												<option value="j">J</option>
-												<option value="g">G</option>
-												<option value="c">C</option>
-											</select>
-											<input class='form-control w-75 w-sm-100 w-md-100 w-lg-100 ml-2 ml-sm-2 ml-md-2 ml-lg-0' type='text' t-attf-name="#{counter}-vat" id="#{counter}-vat" required="This field is required"/>										
-                                        </div>
-										
-			                            <div class="col-none col-lg-1 pr-lg-0 d-inline-flex d-none d-sm-none d-md-none d-lg-block align-items-center">
-											<label class="mr-5 d-none d-sm-none d-md-none d-lg-block">Doc</label>
-											<select name="prefix_vat" t-attf-class="form-control w-auto ml-4 ml-lg-0 d-none d-sm-none d-md-none d-lg-block" required="This field is required" t-attf-name="#{counter}-prefix_vat">
+			                            <div class="col-lg-1 pr-lg-0 d-inline-flex d-lg-block align-items-center">
+											<label class="mr-5">Doc</label>
+											<select name="prefix_vat" t-attf-class="form-control w-auto ml-5 ml-lg-0 d-lg-block" required="This field is required" t-attf-name="#{counter}-prefix_vat">
 												<option value="v">V</option>
 												<option value="e">E</option>
 												<option value="j">J</option>
@@ -55,21 +42,29 @@
 												<option value="c">C</option>
 											</select>
                                         </div>
-			                            <div class="col-1 col-sm-1 col-md-1- col-lg-2 pr-lg-0 d-none d-sm-none d-md-none d-lg-block  d-inline-flex align-items-center mt-2 mt-lg-0">
-				                            <label class="d-none d-sm-none d-md-none d-lg-block">C.I/R.I.F</label>
-											<input class='form-control w-75 w-sm-100 w-md-100 w-lg-100  ml-5 ml-sm-5 ml-md-5 ml-lg-0 d-none d-sm-none d-md-none d-lg-block' type='text' t-attf-name="#{counter}-vat" id="#{counter}-vat" required="This field is required"/>
+			                            <div class="col-lg-2 pr-lg-0 d-lg-inline-block d-inline-flex align-items-center mt-2 mt-lg-0">
+				                            <label>C.I/R.I.F</label>
+											<div class="w-100 ml-1 mr-5">
+												<input class='form-control w-100 w-sm-100 w-md-100 w-lg-100 ml-5 ml-sm-5 ml-md-5 ml-lg-0' type='text' t-attf-name="#{counter}-vat" id="#{counter}-vat" required="This field is required" />
+											</div>
 										</div>
 	                                    <div class="col-lg-2 pr-lg-0 d-inline-flex d-lg-inline-block align-items-center mt-sm-2 mt-2 mt-md-2 mt-lg-0">
 	                                        <label>Name</label>
-	                                        <input class="form-control w-75 w-sm-100 w-md-100 w-lg-100 ml-5 ml-sm-5 ml-md-5 ml-lg-0" type="text" t-attf-name="#{counter}-name" required="This field is required"/>
+											<div class="w-100 ml-1 mr-5">
+												<input class="form-control w-100 w-sm-100 w-md-100 w-lg-100 ml-5 ml-sm-5 ml-md-5 ml-lg-0" type="text" t-attf-name="#{counter}-name" required="This field is required"/>
+											</div>
 	                                    </div>
 	                                    <div class="col-lg-2 pr-lg-0 d-inline-flex d-lg-inline-block align-items-center mt-2 mt-lg-0">
 	                                        <label>Email</label>
-	                                        <input class="form-control w-100 w-sm-100 w-md-100 w-lg-100 mr-lg-0 ml-3 ml-sm-2 ml-md-2 ml-lg-0" type="email" t-attf-name="#{counter}-email" required="This field is required"/>
+											<div class="w-100 ml-2 ml-sm-0 ml-md-0 ml-lg-0 mr-3 mr-sm-2 mr-md-2">
+	                                        	<input class="form-control w-100 w-sm-100 w-md-100 w-lg-100 mr-lg-0 ml-3 ml-sm-2 ml-md-2 ml-lg-0" type="email" t-attf-name="#{counter}-email" required="This field is required"/>
+											</div>
 	                                    </div>
 	                                    <div class="col-lg-2 pr-lg-0 d-inline-flex d-lg-inline-block align-items-center mt-1 mt-lg-0">
 	                                        <label>Phone <small>(Optional)</small></label>
-	                                        <input class="form-control w-100 w-sm-100 w-md-100 w-lg-100 mr-lg-0 ml-3 ml-sm-2 ml-md-2 ml-lg-0" type="tel" t-attf-name="#{counter}-phone"/>
+											<div class="w-100 ml-2 ml-sm-0 ml-md-0 ml-lg-0 mr-3 mr-sm-2 mr-md-2">
+												<input class="form-control w-100 w-sm-100 w-md-100 w-lg-100 mr-lg-0 ml-3 ml-sm-2 ml-md-2 ml-lg-0" type="tel" t-attf-name="#{counter}-phone"/>
+											</div>
 	                                    </div>
 			                            <div class="col-lg pr-lg-0 d-inline-flex d-lg-inline-block align-items-center mt-2 mt-lg-0">
 				                            <label>Frecuente</label>
@@ -104,7 +99,7 @@
 												<option value="g">G</option>
 												<option value="c">C</option>
 											</select>
-											<input class='form-control ml-3 ml-lg-0' t-att-value="c.frecuent_partner_id.vat" type='text' t-attf-name="f#{counter_frequent}-vat"/>                                        </div>
+											<input class='form-control ml-3 ml-lg-0' t-att-value="c.frecuent_partner_id.vat" type='text' t-attf-name="f#{counter_frequent}-vat"/></div>
 	                            
 								<div class="col-none col-lg-1 pr-lg-0 d-inline-flex d-none d-sm-none d-md-none d-lg-block align-items-center ml-3 mr-3">
 									<strong class="d-lg-none d-none d-sm-none d-md-none">Doc</strong>
@@ -236,8 +231,9 @@
 	                                    <t t-set="seats_max_ticket" t-value="(not ticket.seats_limited or ticket.seats_available &gt; 9) and 10 or ticket.seats_available + 1"/>
 	                                    <t t-set="seats_max_event" t-value="(not event.seats_limited or event.seats_available &gt; 9) and 10 or event.seats_available + 1"/>
 	                                    <t t-set="seats_max" t-value="min(seats_max_ticket, seats_max_event)"/>
-	                                    <t t-foreach="range(0, seats_max)" t-as="nb">
-	                                        <option t-esc="nb" t-att-selected="len(ticket) == 0 and nb == 0 and 'selected'"/>
+										<t t-set="qty_max_to_day" t-value="int(request.env['ir.config_parameter'].sudo().get_param('qty_max_to_day'))"/>
+	                                    <t t-foreach="range(0, qty_max_to_day)" t-as="nb">
+	                                        <option t-esc="nb + 1" t-att-selected="len(ticket) == 0 and nb == 0 and 'selected'"/>
 	                                    </t>
 	                                </select>
 	                                <div t-else="" class="text-danger">
@@ -272,11 +268,14 @@
 	                                <span class="text-dark font-weight-bold align-middle pr-2">Qty</span>
 	                                <link itemprop="availability" content="http://schema.org/InStock"/>
 	                                <select t-att-name="'nb_register-%s' % (tickets.id if tickets else 0)" class="w-auto custom-select">
-	                                    <t t-set="seats_max_ticket" t-value="(not tickets or not tickets.seats_limited or tickets.seats_available &gt; 9) and 10 or tickets.seats_available + 1"/>
+										
+										<t t-set="seats_max_ticket" t-value="(not tickets or not tickets.seats_limited or tickets.seats_available &gt; 9) and 10 or tickets.seats_available + 1"/>
 	                                    <t t-set="seats_max_event" t-value="(not event.seats_limited or event.seats_available &gt; 9) and 10 or event.seats_available + 1"/>
 	                                    <t t-set="seats_max" t-value="min(seats_max_ticket, seats_max_event) if tickets else seats_max_event"/>
-	                                    <t t-foreach="range(0, seats_max)" t-as="nb">
-	                                        <option t-esc="nb" t-att-selected="nb == 1 and 'selected'"/>
+										
+										<t t-set="qty_max_to_day" t-value="int(request.env['ir.config_parameter'].sudo().get_param('qty_max_to_day'))"/>
+	                                    <t t-foreach="range(0, qty_max_to_day)" t-as="nb">
+	                                        <option t-esc="nb + 1" t-att-selected="nb == 0 and 'selected'"/>
 	                                    </t>
 	                                </select>
 	                            </t>
